@@ -15,6 +15,8 @@ import os
 import itertools
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
+import time
+
 
 # Keras import
 from tensorflow.keras import Sequential
@@ -73,7 +75,12 @@ adam=Adam(learning_rate=learn_rate, beta_1=0.9, beta_2=0.999, epsilon=None, deca
 print("Compiling model...")
 base_model_1.compile(optimizer=adam,loss='categorical_crossentropy',metrics=['accuracy'])
 print("Training model...")
+print("Starting time measurement...")
+
+start = time.time()
 base_model_1.fit(train_generator.flow(x_train, y_train, batch_size=batch_size),
                       epochs=epochs,
                       steps_per_epoch=x_train.shape[0]//batch_size,
                       callbacks=[lrr],verbose=1)
+end = time.time()
+print("Elapsed Time (min):",(end - start)/60.0)
