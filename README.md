@@ -17,7 +17,8 @@ A simple benchmarking script is `resnet_benchmark1.py`. To use it you need to:
 
 This will gives the time needed to train 1 epoch with two networks: VGG19 and resnet50.
 Please note that training on a CPU may take 20-30 minutes for each network so be warned. The dataset
-used is CIFAR-10. The training is performed with `ImageGenerator`.
+used is CIFAR-10. The training is performed with `ImageGenerator` with a `batch_size=100`. So for 100 
+effective images.
 
 ## Sample Results
 
