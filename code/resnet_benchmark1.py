@@ -60,7 +60,9 @@ learn_rate = 0.01
 
 adam=Adam(learning_rate=learn_rate, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 
+print("Compiling model...")
 base_model_1.compile(optimizer=adam,loss='categorical_crossentropy',metrics=['accuracy'])
+print("Training model...")
 base_model_1.fit(train_generator.flow(x_train,y_train,batch_size=batch_size),
                       epochs=epochs,
                       steps_per_epoch=x_train.shape[0]//batch_size,
