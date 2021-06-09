@@ -1,6 +1,6 @@
-
-import os
+import subprocess
 import tensorflow as tf
 
 print("TensorFlow Version:", tf.__version__)
-print(os.system('/usr/local/cuda/bin/nvcc --version'))
+command = subprocess.run('/usr/local/cuda/bin/nvcc --version', capture_output=True)
+sys.stdout.buffer.write(command.stdout)
