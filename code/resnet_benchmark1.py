@@ -83,4 +83,8 @@ base_model_1.fit(train_generator.flow(x_train, y_train, batch_size=batch_size),
                       steps_per_epoch=x_train.shape[0]//batch_size,
                       callbacks=[lrr],verbose=1)
 end = time.time()
+print("-------------------------------------------------")
+print("Benachmark Results")
+print()
 print("Elapsed Time (min):",(end - start)/60.0)
+print("-------------------------------------------------")
