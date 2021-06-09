@@ -1,5 +1,10 @@
 # tfrabbit
-This repository contains the benchmarking code for TF.
+
+Version 1.0
+
+Author: Umberto Michelucci
+
+This repository contains the benchmarking code for TensorFlow
 
 ## Benchmarking 
 
