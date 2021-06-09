@@ -32,7 +32,7 @@ Software stack
 - CUDA 11.3
 - NVIDIA Driver 465.19.01
 
-Benchmarking Output
+Benchmark Output
 
     -------------------------------------------------
     Benachmark Results for VGG19
@@ -46,3 +46,24 @@ Benchmarking Output
     Elapsed Time (min): 0.4155214587847392
     -------------------------------------------------
 
+### Macbook Pro 16 in (2020)
+
+- CPU Intel(R) i9 - 2.3 GHz 8-Core 
+
+Software Stack
+- TensorFlow 2.5
+
+
+Benchmark Output
+
+        -------------------------------------------------
+        Benachmark Results for VGG19
+
+        Elapsed Time (min): 16.789986399809518
+        -------------------------------------------------
+        500/500 [==============================] - 1029s 2s/step - loss: 2.8604 - accuracy: 0.1865
+        -------------------------------------------------
+        Benachmark Results for resnet50
+
+        Elapsed Time (min): 17.157415350278217
+        -------------------------------------------------
