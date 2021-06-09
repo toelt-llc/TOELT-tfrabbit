@@ -63,8 +63,7 @@ adam=Adam(learning_rate=learn_rate, beta_1=0.9, beta_2=0.999, epsilon=None, deca
 print("Compiling model...")
 base_model_1.compile(optimizer=adam,loss='categorical_crossentropy',metrics=['accuracy'])
 print("Training model...")
-base_model_1.fit(train_generator.flow(x_train,y_train,batch_size=batch_size),
+base_model_1.fit(train_generator,
                       epochs=epochs,
-                      steps_per_epoch=x_train.shape[0]//batch_size,
-                      validation_data=test_generator,validation_steps=250,
+                      steps_per_epoch=x_train.shape[0]//batch_size,validation_steps=250,
                       callbacks=[lrr],verbose=1)
