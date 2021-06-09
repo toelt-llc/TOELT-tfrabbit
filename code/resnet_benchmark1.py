@@ -74,6 +74,7 @@ adam=Adam(learning_rate=learn_rate, beta_1=0.9, beta_2=0.999, epsilon=None, deca
 # For the moment we use only VGG19. Note that resent50 is even bigger so it will take longer.
 print("Compiling model...")
 base_model_1.compile(optimizer=adam,loss='categorical_crossentropy',metrics=['accuracy'])
+base_model_2.compile(optimizer=adam,loss='categorical_crossentropy',metrics=['accuracy'])
 print("Training model...")
 print("Starting time measurement...")
 
@@ -84,7 +85,20 @@ base_model_1.fit(train_generator.flow(x_train, y_train, batch_size=batch_size),
                       callbacks=[lrr],verbose=1)
 end = time.time()
 print("-------------------------------------------------")
-print("Benachmark Results")
+print("Benachmark Results for VGG19")
+print()
+print("Elapsed Time (min):",(end - start)/60.0)
+print("-------------------------------------------------")
+
+
+start = time.time()
+base_model_2.fit(train_generator.flow(x_train, y_train, batch_size=batch_size),
+                      epochs=epochs,
+                      steps_per_epoch=x_train.shape[0]//batch_size,
+                      callbacks=[lrr],verbose=1)
+end = time.time()
+print("-------------------------------------------------")
+print("Benachmark Results for resnet50")
 print()
 print("Elapsed Time (min):",(end - start)/60.0)
 print("-------------------------------------------------")
