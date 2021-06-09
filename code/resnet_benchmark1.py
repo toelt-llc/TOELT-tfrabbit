@@ -1,3 +1,12 @@
+#
+# Benchmarking for TensorFlow VGG19 with TensorFlow and the
+# dataset CIFAR-10.
+#
+# Author: Umberto Michelucci
+# Version 1.0
+#
+
+# Generic Imports
 from tensorflow.keras.datasets import cifar10
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
@@ -43,7 +52,7 @@ test_generator.fit(x_test)
 
 # Learning rate decay
 lrr= ReduceLROnPlateau(
-                       monitor='val_acc', #Metric to be measured
+                       monitor='accuracy', #Metric to be measured
                        factor=.01, #Factor by which learning rate will be reduced
                        patience=3,  #No. of epochs after which if there is no improvement in the val_acc, the learning rate is reduced
                        min_lr=1e-5) #The minimum learning rate
@@ -54,12 +63,13 @@ base_model_2 = ResNet50(include_top=True,weights=None,input_shape=(32,32,3),clas
 
 print(base_model_1.summary())
 
-batch_size = 100
-epochs = 1
+batch_size = 100 # This can be changed if needed.
+epochs = 1 # On a CPU this can take up to 20-30 minutes so we only test one epoch.
 learn_rate = 0.01
 
 adam=Adam(learning_rate=learn_rate, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 
+# For the moment we use only VGG19. Note that resent50 is even bigger so it will take longer.
 print("Compiling model...")
 base_model_1.compile(optimizer=adam,loss='categorical_crossentropy',metrics=['accuracy'])
 print("Training model...")
