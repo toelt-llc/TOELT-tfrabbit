@@ -31,6 +31,10 @@ effective images.
 | CPU Intel(R) i9 - 2.3 GHz 8-Core |  None | N/A | N/A | 16.8 | 17.2 |
 | CPU Intel(R) Core(TM) i7-7700 @ 3.60 Ghz - 4 Cores|  None | N/A | N/A | 22.2 | 20.0 |
 
+As a plot the numbers looks like the figure below
+
+![benchmark Figure](https://github.com/toelt-llc/tfrabbit/blob/main/images/benchmark-1.png)
+
 
 ### Dedicated Deep Learning Linux Server
 
