@@ -32,9 +32,9 @@ ds_test = ds_test.prefetch(tf.data.experimental.AUTOTUNE)
 
 model = tf.keras.models.Sequential([
   tf.keras.layers.Flatten(input_shape=(28, 28)),
-  tf.keras.layers.Dense(5000,activation='relu'),
-  tf.keras.layers.Dense(5000,activation='relu'),
-  tf.keras.layers.Dense(5000,activation='relu'),
+  tf.keras.layers.Dense(50000,activation='relu'),
+  tf.keras.layers.Dense(50000,activation='relu'),
+  tf.keras.layers.Dense(50000,activation='relu'),
   tf.keras.layers.Dense(10)
 ])
 model.compile(
@@ -51,7 +51,7 @@ model.fit(
 )
 end = time.time()
 print("-------------------------------------------------")
-print("Benachmark Results for VGG19")
+print("Benachmark Results for MNIST")
 print()
 print("Elapsed Time (min):",(end - start)/60.0)
 print("-------------------------------------------------")
