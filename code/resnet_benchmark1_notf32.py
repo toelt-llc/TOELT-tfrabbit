@@ -30,6 +30,7 @@ from tensorflow.keras.utils import to_categorical
 
 # We disable TF-32
 tf.config.experimental.enable_tensor_float_32_execution(False)
+print("TF32 enabled:", tf.config.experimental.tensor_float_32_execution_enabled())
 
 # We load the CIFAR-10 dataset
 (x_train,y_train),(x_test,y_test)=cifar10.load_data()
