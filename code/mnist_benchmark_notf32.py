@@ -46,7 +46,7 @@ model.compile(
 start = time.time()
 model.fit(
     ds_train,
-    epochs=6,
+    epochs=1,
     validation_data=ds_test,
 )
 end = time.time()
