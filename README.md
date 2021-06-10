@@ -29,6 +29,7 @@ effective images.
 | Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz - 18 Cores |  NVIDIA RTX A6000 GPU 48 Gb Memory | 11.3 | 465.19.01 | 0.38 | 0.41 |
 | Intel(R) Xeon(R) CPU @ 2.20GHz |  Tesla T4, 15 Gb Memory | 11.2 | 460.32.03 | 1.05 | 0.70 |
 | CPU Intel(R) i9 - 2.3 GHz 8-Core |  None | N/A | N/A | 16.8 | 17.2 |
+| CPU Intel(R) Core(TM) i7-7700 @ 3.60 Ghz - 4 Cores|  None | N/A | N/A | 22.2 | 20.0 |
 
 
 ### Dedicated Deep Learning Linux Server
