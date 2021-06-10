@@ -22,6 +22,8 @@ effective images.
 
 ## Sample Results
 
+We are testing the code on many systems, as so far we have just a few numbers that are reported for information below. For specific cases we have below the complete output of the script (just as reference).
+
 ### Summary
 
 | CPU | GPU | CUDA Version | NVIDIA Driver (min) | VGG19 Time (min) | resnet50 Time (min)|
