@@ -32,9 +32,9 @@ ds_test = ds_test.prefetch(tf.data.experimental.AUTOTUNE)
 
 model = tf.keras.models.Sequential([
   tf.keras.layers.Flatten(input_shape=(28, 28)),
-  tf.keras.layers.Dense(50000,activation='relu'),
-  tf.keras.layers.Dense(50000,activation='relu'),
-  tf.keras.layers.Dense(50000,activation='relu'),
+  tf.keras.layers.Dense(10000,activation='relu'),
+  tf.keras.layers.Dense(10000,activation='relu'),
+  tf.keras.layers.Dense(10000,activation='relu'),
   tf.keras.layers.Dense(10)
 ])
 model.compile(
