@@ -4,7 +4,7 @@ Version 1.0
 
 Author: Umberto Michelucci
 
-This repository contains the benchmarking code for TensorFlow
+This repository contains the benchmarking code for TensorFlow we developed. We wanted something easy to use and easy to interpret. There are many benchmarking suites but we wanted something quick to get an idea about how different configurations compare. The code will change with time so check the version of the code and the version of the script with which the results have been obtained.
 
 ## Benchmarking 
 
@@ -22,7 +22,7 @@ effective images.
 
 ## Sample Results
 
-We are testing the code on many systems, as so far we have just a few numbers that are reported for information below. For specific cases we have below the complete output of the script (just as reference).
+We are testing the code on many systems, as so far we have just a few numbers that are reported for information below. For specific cases we have below the complete output of the script (just as reference). The results have been obtained with version 1.0 of the script `python resnet_benchmark1.py`.
 
 ### Summary
 
