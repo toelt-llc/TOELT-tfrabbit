@@ -53,6 +53,7 @@ neuron_list = [1,10,100,500, 1000, 1500, 2000, 5000, 10000]
 
 with tf.device('/CPU:0'):
     for i in neuron_list:
+        print("-------- Number of neurons:",i)
         model = create_model(i)
 
         start = time.time()
@@ -68,6 +69,7 @@ with tf.device('/CPU:0'):
 
 with tf.device('/GPU:0'):
     for i in neuron_list:
+        print("-------- Number of neurons:",i)
         model = create_model(i)
 
         start = time.time()
