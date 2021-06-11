@@ -65,7 +65,7 @@ with tf.device('/CPU:0'):
         end = time.time()
         print("Elapsed Time (min):",(end - start)/60.0)
         print("-------------------------------------------------")
-        times_list_GPU.append((end - start)/60.0)
+        times_list_noGPU.append((end - start)/60.0)
 
 with tf.device('/GPU:0'):
     for i in neuron_list:
@@ -81,7 +81,7 @@ with tf.device('/GPU:0'):
         end = time.time()
         print("Elapsed Time (min):",(end - start)/60.0)
         print("-------------------------------------------------")
-        times_list_noGPU.append((end - start)/60.0)
+        times_list_GPU.append((end - start)/60.0)
 
 print("Times with GPU:")
 print(times_list_GPU)
