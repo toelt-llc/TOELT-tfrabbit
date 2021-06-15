@@ -10,7 +10,7 @@ This repository contains the benchmarking code for TensorFlow we developed. We w
 
 A simple benchmarking script is `resnet_benchmark1.py`. To use it you need to:
 
-- `git clone `
+- `git clone https://github.com/toelt-llc/tfrabbit.git`
 - `cd tfrabbit`
 - `cd code`
 - `python resnet_benchmark1.py`
