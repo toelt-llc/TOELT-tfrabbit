@@ -6,6 +6,10 @@ Author: Umberto Michelucci
 
 This repository contains the benchmarking code for TensorFlow we developed. We wanted something easy to use and easy to interpret. There are many benchmarking suites but we wanted something quick to get an idea about how different configurations compare. The code will change with time so check the version of the code and the version of the script with which the results have been obtained.
 
+## Why the name?
+
+You know the story about the rabbit and the turtle? About the race to see who is faster? Well if you know it you can imagine why the name right? This repository is all about benchmarking different systems, especially when regarding GPUs.
+
 ## Benchmarking 
 
 A simple benchmarking script is `resnet_benchmark1.py`. To use it you need to:
