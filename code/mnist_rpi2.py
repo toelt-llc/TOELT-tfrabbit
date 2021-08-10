@@ -31,10 +31,13 @@ for i in range(len(y_test)):
     temp.append(to_categorical(y_test[i], num_classes=10))
 y_test = np.array(temp)
 
-neurons = [5, 10, 100, 500, 1000, 5000, 10000]#, 100000]
+neurons = [5, 10, 100, 500, 1000]#, 5000, 10000]#, 100000]
 
 times = []
 def run_model(n):
+    i = 1
+    print("===== Step : ", n, i '=====')
+    
     model = Sequential()
     model.add(Flatten(input_shape=(28,28)))
     model.add(Dense(n, activation='relu'))
@@ -47,6 +50,8 @@ def run_model(n):
     model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
     end = time.time()
     times.append(round(end-start, 2))
+    
+    i += 1
     
 for n in neurons:
     run_model(n)
