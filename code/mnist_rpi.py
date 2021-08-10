@@ -41,7 +41,7 @@ model4.compile(loss='categorical_crossentropy',
               metrics=['acc'])
               
 start = time.time()
-model4.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test))
+model4.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
 end = time.time()
 
 print("-------------------------------------------------")
