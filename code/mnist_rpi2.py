@@ -31,23 +31,24 @@ for i in range(len(y_test)):
     temp.append(to_categorical(y_test[i], num_classes=10))
 y_test = np.array(temp)
 
-model = Sequential()
-model.add(Flatten(input_shape=(28,28)))
-model.add(Dense(1000, activation='relu'))
-model.add(Dense(10, activation='relu'))
+neurons = [5, 10, 100, 500, 1000, 5000, 10000]#, 100000]
 
-model.compile(loss='categorical_crossentropy', 
+times = []
+def run_model(n):
+    model = Sequential()
+    model.add(Flatten(input_shape=(28,28)))
+    model.add(Dense(n, activation='relu'))
+    model.add(Dense(n, activation='relu'))
+    model.add(Dense(10, activation='relu'))
+    model.compile(loss='categorical_crossentropy', 
               optimizer='adam',
               metrics=['acc'])
-              
-start = time.time()
-model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
-end = time.time()
-
-print("-------------------------------------------------")
-print("Benchmark Results for this test")
-print()
-print("Elapsed Time (min):",(end - start)/60.0)
-print(end-start, "seconds")
-print("-------------------------------------------------")
+    start = time.time()
+    model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
+    end = time.time()
+    times.append(round(end-start, 2))
+    
+for n in neurons:
+    run_model(n)
+print(times)
 
