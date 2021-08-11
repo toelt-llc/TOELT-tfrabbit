@@ -63,7 +63,7 @@ def predict_time(size):
     img_time = round((end1-start1)/size, 4 )
     print('Time to classify ', size, ' images : ', end1-start1)
     print('Average time to classify 1 image : ', img_time)
-    pred_times_tot.append(end-start)
+    pred_times_tot.append(end1-start1)
     pred_times1.append(img_time)
 
 for n in neurons:
