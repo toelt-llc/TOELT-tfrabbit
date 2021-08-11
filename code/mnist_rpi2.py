@@ -1,6 +1,7 @@
 import numpy as np
 import keras
 import time
+import pandas as pd
 
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
@@ -27,8 +28,9 @@ y_test = np.array(temp)
 
 
 neurons = [5, 10, 100]#, 500, 1000]#, 5000, 10000]#, 100000]
+dfres =  pd.DataFrame( columns=["Execution time ", "Prediction time", " By image"])
+    
 exec_times = []
-
 pred_times_tot = []
 pred_times1 = []
 
@@ -48,6 +50,7 @@ def run_model(n):
     model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
     end = time.time()
     exec_times.append(round(end-start, 2))
+    dfres.loc[n] = round(end-start, 2)
     
     model.save('./bench_model')
     
@@ -63,12 +66,22 @@ def predict_time(size):
     img_time = round((end1-start1)/size, 4 )
     print('Time to classify ', size, ' images : ', end1-start1)
     print('Average time to classify 1 image : ', img_time)
+    
     pred_times_tot.append(end1-start1)
     pred_times1.append(img_time)
+    
+    dfres.loc[n]['Prediction time'] = round(end1-start1, 2)
+    dfres.loc[n][2] = img_time
 
+ 
 for n in neurons:
     run_model(n)
     predict_time(50000)
 
+print(dfres)
+print('Prediction over {} training examples. '.format('50000'))
+
 res = zip(neurons, exec_times, pred_times_tot)
 print(list(res))
+
+
