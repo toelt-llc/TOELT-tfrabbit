@@ -79,7 +79,7 @@ for n in neurons:
     predict_time(50000)
 
 print(dfres)
-print('Prediction over {} training examples. '.format('50000'))
+print('Prediction time is over {} training examples. '.format('50000'))
 
 res = zip(neurons, exec_times, pred_times_tot)
 print(list(res))
