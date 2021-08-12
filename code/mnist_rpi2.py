@@ -27,7 +27,7 @@ for i in range(len(y_test)):
 y_test = np.array(temp)
 
 
-neurons = [5, 10, 100, 500]#, 1000, 5000, 10000]#, 100000]
+neurons = [5, 10, 100, 500, 1000, 5000, 10000]#, 100000]
 dfres =  pd.DataFrame( columns=["Execution time ", "Prediction time", " By image"])
     
 exec_times = []
