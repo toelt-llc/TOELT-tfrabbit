@@ -27,7 +27,7 @@ for i in range(len(y_test)):
 y_test = np.array(temp)
 
 
-neurons = [5, 10, 100]#, 500, 1000]#, 5000, 10000]#, 100000]
+neurons = [5, 10, 100, 500]#, 1000, 5000, 10000]#, 100000]
 dfres =  pd.DataFrame( columns=["Execution time ", "Prediction time", " By image"])
     
 exec_times = []
@@ -73,7 +73,7 @@ def predict_time(size):
     dfres.loc[n]['Prediction time'] = round(end1-start1, 2)
     dfres.loc[n][2] = img_time
 
- 
+#for n in neurons[:3]:
 for n in neurons:
     run_model(n)
     predict_time(50000)
