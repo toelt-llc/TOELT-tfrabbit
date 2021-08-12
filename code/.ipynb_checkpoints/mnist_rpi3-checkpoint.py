@@ -53,7 +53,7 @@ def main(argv):
         predict_time(n, predictions, x_train, y_train)
 
     print(dfres)
-    print('Prediction time is over {} training examples. '.format('50000'))
+    print('Prediction time is over {} training examples. '.format(predictions))
 
 
     
