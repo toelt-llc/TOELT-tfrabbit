@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sys, getopt
 import numpy as np
+import tensorflow as tf
 import keras
 import time
 import pandas as pd
@@ -87,8 +88,8 @@ def run_model(n, x_train, x_test, y_train, y_test):
     model.add(Flatten(input_shape=(28,28)))
     model.add(Dense(n, activation='relu'))
     model.add(Dense(n, activation='relu'))
+    model.add(tf.keras.layers.Lambda(lambda x: tf.where(tf.math.is_nan(x), tf.zeros_like(x), x)))
     model.add(Dense(10, activation='relu'))
-    
     model.compile(loss='categorical_crossentropy', 
               optimizer='adam',
               metrics=['acc'])
@@ -97,13 +98,14 @@ def run_model(n, x_train, x_test, y_train, y_test):
     start = time.time()
     model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
     end = time.time()
+    
     exec_times.append(round(end-start, 2))
     dfres.loc[n] = round(end-start, 2)
     
-    model.save('./bench_model')
+    model.save('./tflite/bench_model')
     
 def predict_time(n, size, x_train, y_train):
-    model = keras.models.load_model('./bench_model')
+    model = keras.models.load_model('./tflite/bench_model')
     train_sample = x_train[:size]
     test_sample = y_train[:size]
 
@@ -112,14 +114,13 @@ def predict_time(n, size, x_train, y_train):
     end1 = time.time()
     
     img_time = round((end1-start1)/size, 4 )
-    print('Time to classify ', size, ' images : ', end1-start1)
-    print('Average time to classify 1 image : ', img_time)
-    
     pred_times_tot.append(end1-start1)
     pred_times1.append(img_time)
     
     dfres.loc[n]['Prediction time'] = round(end1-start1, 2)
     dfres.loc[n][2] = img_time
+    #print('Time to classify ', size, ' images : ', end1-start1)
+    #print('Average time to classify 1 image : ', img_time)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
