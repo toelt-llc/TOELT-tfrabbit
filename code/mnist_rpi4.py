@@ -21,8 +21,9 @@ pred_times1 = []
 def main(argv):
     neurons_list = ''
     predictions = ''
+    result = ''
     try:
-        opts, args = getopt.getopt(argv,"hn:p:",["neurons=","predictions="])
+        opts, args = getopt.getopt(argv,"hn:p:r:",["neurons=","predictions=","saved_result="])
         if len(sys.argv) == 1:
             print('! No args !')
             print('Usage : args.py -n \'neurons\' p <npredictions>')
@@ -40,6 +41,8 @@ def main(argv):
             neurons_list = convert(arg)
         elif opt in ("-p", "--npredictions"):
             predictions = int(arg)
+        elif opt in ("-r", "--saved_result"):
+            result = arg
 
     if len(sys.argv) > 1:
         print('Neurons array is :', neurons_list)
@@ -53,6 +56,7 @@ def main(argv):
 
     dfres.index.name = 'Neurons'
     dfres.to_csv('./saved_results/dfres.csv')
+    dfres.to_pickle('./saved_results/' + result + '.pkl')
     print(dfres)
     print('Prediction time is over {} training examples. '.format(predictions))
 
