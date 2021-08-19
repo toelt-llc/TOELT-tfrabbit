@@ -55,7 +55,7 @@ def main(argv):
         predict_time(n, predictions, x_train, y_train)
 
     dfres.index.name = 'Neurons'
-    dfres.to_csv('./saved_results/dfres.csv')
+    dfres.to_csv('./saved_results/'+ result + 'csv')
     dfres.to_pickle('./saved_results/' + result + '.pkl')
     print(dfres)
     print('Prediction time is over {} training examples. '.format(predictions))
