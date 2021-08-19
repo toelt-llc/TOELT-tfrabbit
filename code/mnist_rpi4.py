@@ -17,7 +17,7 @@ exec_times = []
 pred_times_tot = []
 pred_times1 = []
     
-    
+# Version that saves the dfres    
 def main(argv):
     neurons_list = ''
     predictions = ''
@@ -27,8 +27,6 @@ def main(argv):
             print('! No args !')
             print('Usage : args.py -n \'neurons\' p <npredictions>')
             print('Default is n = 5,10,100,500 and p = 50000')
-            #neurons_list = '5,10,100,500'
-            #predictions = 50000
     except getopt.GetoptError:
         print('Usage : args.py -n \'neurons\' p <npredictions>')
         sys.exit(2)
@@ -53,6 +51,8 @@ def main(argv):
         run_model(n, x_train, x_test, y_train, y_test)
         predict_time(n, predictions, x_train, y_train)
 
+    dfres.index.name = 'Neurons'
+    dfres.to_csv('./saved_results/dfres.csv')
     print(dfres)
     print('Prediction time is over {} training examples. '.format(predictions))
 
@@ -63,19 +63,16 @@ def convert(string):
     return li
 
 def loading():
-    # mnist check
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     assert x_train.shape == (60000, 28, 28)
     assert x_test.shape == (10000, 28, 28)
     assert y_train.shape == (60000,)
     assert y_test.shape == (10000,) 
 
-    # Convert y_train into one-hot format
     temp = []
     for i in range(len(y_train)):
         temp.append(to_categorical(y_train[i], num_classes=10))
     y_train = np.array(temp)
-    # Same for y_test
     temp = []
     for i in range(len(y_test)):    
         temp.append(to_categorical(y_test[i], num_classes=10))
@@ -119,8 +116,6 @@ def predict_time(n, size, x_train, y_train):
     
     dfres.loc[n]['Prediction time'] = round(end1-start1, 2)
     dfres.loc[n][2] = img_time
-    #print('Time to classify ', size, ' images : ', end1-start1)
-    #print('Average time to classify 1 image : ', img_time)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
