@@ -132,7 +132,7 @@ def run_model(n, x_train, x_test, y_train, y_test):
     
     print("===== Step : ", n, '=====')
     start = time.time()
-    model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
+    model.fit(x_train, y_train, epochs=1,validation_data=(x_test,y_test), batch_size=128)
     end = time.time()
     
     exec_times.append(round(end-start, 2))
