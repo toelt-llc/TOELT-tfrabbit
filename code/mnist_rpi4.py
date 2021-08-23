@@ -1,13 +1,13 @@
 #!/usr/bin/python
 import sys, getopt
-import numpy as np
 import tensorflow as tf
+import pandas as pd
+import numpy as np
 import keras
 import time
-import pandas as pd
 
-from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.datasets import mnist
 from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
@@ -19,6 +19,20 @@ pred_times1 = []
     
 # Version that saves the dfres    
 def main(argv):
+    """
+    1. Manages the args
+    neurons     : amount of neurons in the n inner layers of the current NN (n = 2)
+    predictions : amount of test examples on yhich the trained model is then infered
+    resultname  : name used for this specific prediction to produce the right .csv, (use the device name)
+
+    2. Runs the data loading, model training and prediction functions
+
+    3. Saves the result
+    Under code/saved/results/ , with the given csv name
+    
+    Also prints result dataframe when completed
+
+    """
     neurons_list = ''
     predictions = ''
     result = ''
@@ -26,15 +40,13 @@ def main(argv):
         opts, args = getopt.getopt(argv,"hn:p:r:",["neurons=","predictions=","saved_result="])
         if len(sys.argv) == 1:
             print('! No args !')
-            print('Usage : args.py -n \'neurons\' p <npredictions>')
-            print('Default is n = 5,10,100,500 and p = 50000')
+            print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname')
     except getopt.GetoptError:
-        print('Usage : args.py -n \'neurons\' p <npredictions>')
+        print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage : args.py -n \'neurons\' p <npredictions>')
-            print('Default neurons array is [5, 10, 100, 500], predictions to compute is 50000')
+            print('Usage : args.py -n \'neurons\' p <npredictions> -r resultname')
             sys.exit()
         elif opt in ("-n", "--neurons"):
             arr = sys.argv[1].split(',')
@@ -56,17 +68,29 @@ def main(argv):
 
     dfres.index.name = 'Neurons'
     dfres.to_csv('./saved_results/'+ result + '.csv')
-    dfres.to_pickle('./saved_results/' + result + '.pkl')
+    #dfres.to_pickle('./saved_results/' + result + '.pkl')
     print(dfres)
-    print('Prediction time is over {} training examples. '.format(predictions))
+    print('Prediction time is over {} testing examples. '.format(predictions))
 
 
     
 def convert(string):
+    """
+    Converts and returns the neurons string args into a list 
+    ex : '5,10,15' -> [5,10,15]
+    """
     li = list(string.split(","))
     return li
 
 def loading():
+    """
+    Loads the classic mnist dataset from Keras, check if shape is as expected
+    Converts categories into numbers from 0 to 9
+    Returns x_train, x_test, y_train, y_test
+
+    # TODO use from sklearn.preprocessing import OneHotEncoder
+    https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
+    """
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     assert x_train.shape == (60000, 28, 28)
     assert x_test.shape == (10000, 28, 28)
@@ -85,13 +109,24 @@ def loading():
     return x_train, x_test, y_train, y_test
 
 def run_model(n, x_train, x_test, y_train, y_test):
+    """
+    Args:
+        n : the number of neurons, specified by the user
+        datasets : used by .fit method to train the network
+    Returns:
+        none, but saves the model in /tflite/bench_model/ for further use
+
+    Sequential model with 1 input layer, 2 inner layers and 1 output layer. 
+    Optimizer : Adam . Loss function : MeanSquaredError
+
+    Processes & adds the training time to the result df 
+    """
     model = Sequential()
     model.add(Flatten(input_shape=(28,28)))
     model.add(Dense(n, activation='relu'))
     model.add(Dense(n, activation='relu'))
-    model.add(tf.keras.layers.Lambda(lambda x: tf.where(tf.math.is_nan(x), tf.zeros_like(x), x)))
     model.add(Dense(10, activation='relu'))
-    model.compile(loss='categorical_crossentropy', 
+    model.compile(loss='MeanSquaredError', 
               optimizer='adam',
               metrics=['acc'])
     
@@ -105,10 +140,18 @@ def run_model(n, x_train, x_test, y_train, y_test):
     
     model.save('./tflite/bench_model')
     
-def predict_time(n, size, x_train, y_train):
+def predict_time(n, size, x_test, y_test):
+    """
+    Args:
+        n    : the number of neurons, specified by the user
+        size : size of the test set prediction, max is 10000
+
+    Processes & adds the inference time on the tests to the result df + computes time/img 
+    # TODO output accuracy
+    """
     model = keras.models.load_model('./tflite/bench_model')
-    train_sample = x_train[:size]
-    test_sample = y_train[:size]
+    train_sample = x_test[:size]
+    test_sample = y_test[:size]
 
     start1 = time.time()
     preds = model.predict(train_sample)
