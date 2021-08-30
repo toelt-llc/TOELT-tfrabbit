@@ -12,14 +12,13 @@ from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
 
-dfres =  pd.DataFrame( columns=["Execution time ", "Prediction time", "By image", 'Loss', 'Acc'])
+dfres =  pd.DataFrame( columns=["Layers","Execution time ", "Prediction time", "By image", 'Loss', 'Acc'])
 exec_times = []
 pred_times_tot = []
 pred_times1 = []
     
-# mnist_rpi4 but with a different network which gives loss & accuracy results
-# last layer = softmax activation
-# opt = sgd
+# mnist_rpi5 but with a possibility to precise the list of layers 
+# Not complete, the results csv fornat has to change 
 newres = {}
 
 def main(argv):
@@ -41,24 +40,25 @@ def main(argv):
     predictions = ''
     result = ''
     try:
-        opts, args = getopt.getopt(argv,"hn:p:r:",["neurons=","predictions=","saved_result="])
+        opts, args = getopt.getopt(argv,"hn:p:r:l:",["neurons=","predictions=","saved_result=","layers="])
         if len(sys.argv) == 1:
             print('! No args !')
             print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname')
     except getopt.GetoptError:
-        print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname')
+        print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname -l layers')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage : args.py -n \'neurons\' p <npredictions> -r resultname')
+            print('Usage : args.py -n \'neurons\' p <npredictions> -r resultname -l layers')
             sys.exit()
         elif opt in ("-n", "--neurons"):
-            arr = sys.argv[1].split(',')
             neurons_list = convert(arg)
         elif opt in ("-p", "--npredictions"):
             predictions = int(arg)
         elif opt in ("-r", "--saved_result"):
             result = arg
+        elif opt in ("-l", "layers"):
+            layers = convert(arg)
 
     if len(sys.argv) > 1:
         print('Neurons array is :', neurons_list)
@@ -67,12 +67,12 @@ def main(argv):
     x_train, x_test, y_train, y_test = loading()
     
     for n in neurons_list:
-        run_model(n, x_train, x_test, y_train, y_test)
-        predict_time(n, predictions, x_train, y_train)
+        for l in layers:
+            run_model(n, int(l), x_train, x_test, y_train, y_test)
+            predict_time(n, l, predictions, x_train, y_train)
 
     dfres.index.name = 'Neurons'
-    ## !!! to change depending on the device
-    dfres.to_csv('./saved_results/frodo/'+ result + '.csv')
+    dfres.to_csv('./saved_results/'+ result + '.csv')
     #dfres.to_pickle('./saved_results/' + result + '.pkl')
     print(dfres)
     print('Prediction time is over {} testing examples. '.format(predictions))
@@ -114,7 +114,7 @@ def loading():
     
     return x_train, x_test, y_train, y_test
 
-def run_model(n, x_train, x_test, y_train, y_test):
+def run_model(n, l, x_train, x_test, y_train, y_test):
     """
     Args:
         n : the number of neurons, specified by the user
@@ -122,15 +122,15 @@ def run_model(n, x_train, x_test, y_train, y_test):
     Returns:
         none, but saves the model in /tflite/bench_model/ for further use
 
-    Sequential model with 1 input layer, 2 inner layers and 1 output layer. 
-    Optimizer : Adam . Loss function : MeanSquaredError
+    Sequential model with Optimizer : Adam . Loss function : MeanSquaredError
 
     Processes & adds the training time to the result df 
     """
-    model = Sequential()
-    model.add(Flatten(input_shape=(28,28)))
-    model.add(Dense(n, activation='relu'))
-    model.add(Dense(n, activation='relu'))
+    model = Sequential([Flatten(input_shape=(28,28))])
+    i = 0 
+    while i < l:
+        model.add(Dense(n, activation='relu'))
+        i += 1
     model.add(Dense(10, activation='softmax'))
     model.compile(loss='MeanSquaredError', 
               optimizer='sgd',
@@ -145,18 +145,17 @@ def run_model(n, x_train, x_test, y_train, y_test):
     dfres.loc[n] = round(end-start, 2)
     
     model.save('./tflite/bench_model')
-    #v5
-    #newres.append(history.history['acc'])
+    #v6
+    print(model.summary())
+    
 
-eval     
-def predict_time(n, size, x_test, y_test):
+def predict_time(n, l, size, x_test, y_test):
     """
     Args:
         n    : the number of neurons, specified by the user
         size : size of the test set prediction, max is 10000
 
     Processes & adds the inference time on the tests to the result df + computes time/img 
-    # TODO output accuracy
     """
     model = keras.models.load_model('./tflite/bench_model')
     train_sample = x_test[:size]
@@ -171,13 +170,18 @@ def predict_time(n, size, x_test, y_test):
     pred_times1.append(img_time)
     
     dfres.loc[n]['Prediction time'] = round(end1-start1, 2)
-    dfres.loc[n][2] = img_time
+    dfres.loc[n][3] = img_time
     #v5
     print('Evaluation .....')
     eval = model.evaluate(x_test, y_test)
     #newres[n] = eval
     dfres.loc[n]['Loss'] = round(eval[0],2)
     dfres.loc[n]['Acc'] = round(eval[1],2)
+    #v6
+    dfres.loc[n]['Layers'] = int(l)
+    #newversion
+
+
 
 
 if __name__ == "__main__":
