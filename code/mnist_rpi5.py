@@ -12,12 +12,16 @@ from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
 
-dfres =  pd.DataFrame( columns=["Execution time ", "Prediction time", " By image"])
+dfres =  pd.DataFrame( columns=["Execution time ", "Prediction time", "By image", 'Loss', 'Acc'])
 exec_times = []
 pred_times_tot = []
 pred_times1 = []
     
-# Version that saves the dfres    
+# mnist_rpi4 but with a different network which gives loss & accuracy results
+# last layer = softmax activation
+# opt = sgd
+newres = {}
+
 def main(argv):
     """
     1. Manages the args
@@ -71,6 +75,7 @@ def main(argv):
     #dfres.to_pickle('./saved_results/' + result + '.pkl')
     print(dfres)
     print('Prediction time is over {} testing examples. '.format(predictions))
+    print(newres)
 
 
     
@@ -125,21 +130,24 @@ def run_model(n, x_train, x_test, y_train, y_test):
     model.add(Flatten(input_shape=(28,28)))
     model.add(Dense(n, activation='relu'))
     model.add(Dense(n, activation='relu'))
-    model.add(Dense(10, activation='relu'))
+    model.add(Dense(10, activation='softmax'))
     model.compile(loss='MeanSquaredError', 
-              optimizer='adam',
+              optimizer='sgd',
               metrics=['acc'])
     
     print("===== Step : ", n, '=====')
     start = time.time()
-    model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
+    history = model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
     end = time.time()
     
     exec_times.append(round(end-start, 2))
     dfres.loc[n] = round(end-start, 2)
     
     model.save('./tflite/bench_model')
-    
+    #v5
+    #newres.append(history.history['acc'])
+
+eval     
 def predict_time(n, size, x_test, y_test):
     """
     Args:
@@ -163,6 +171,13 @@ def predict_time(n, size, x_test, y_test):
     
     dfres.loc[n]['Prediction time'] = round(end1-start1, 2)
     dfres.loc[n][2] = img_time
+    #v5
+    print('Evaluation .....')
+    eval = model.evaluate(x_test, y_test)
+    #newres[n] = eval
+    dfres.loc[n]['Loss'] = round(eval[0],2)
+    dfres.loc[n]['Acc'] = round(eval[1],2)
+
 
 if __name__ == "__main__":
    main(sys.argv[1:])
