@@ -38,25 +38,23 @@ def main(argv):
 
     """
     neurons_list = ''
-    predictions = ''
     result = ''
+    predictions = 10000
     try:
-        opts, args = getopt.getopt(argv,"hn:p:r:",["neurons=","predictions=","saved_result="])
+        opts, args = getopt.getopt(argv,"hn:r:",["neurons=","saved_result="])
         if len(sys.argv) == 1:
             print('! No args !')
-            print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname')
+            print('Usage : args.py -n \'neurons\' -r resultname')
     except getopt.GetoptError:
-        print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname')
+        print('Usage : args.py -n \'neurons\'  -r resultname')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage : args.py -n \'neurons\' p <npredictions> -r resultname')
+            print('Usage : args.py -n \'neurons\' -r resultname')
             sys.exit()
         elif opt in ("-n", "--neurons"):
             arr = sys.argv[1].split(',')
             neurons_list = convert(arg)
-        elif opt in ("-p", "--npredictions"):
-            predictions = int(arg)
         elif opt in ("-r", "--saved_result"):
             result = arg
 
@@ -68,7 +66,7 @@ def main(argv):
     
     for n in neurons_list:
         run_model(n, x_train, x_test, y_train, y_test)
-        predict_time(n, predictions, x_train, y_train)
+        predict_time(n, x_train, y_train)
 
     dfres.index.name = 'Neurons'
     ## !!! to change depending on the device
@@ -149,15 +147,15 @@ def run_model(n, x_train, x_test, y_train, y_test):
     #newres.append(history.history['acc'])
 
 eval     
-def predict_time(n, size, x_test, y_test):
+def predict_time(n, x_test, y_test):
     """
     Args:
         n    : the number of neurons, specified by the user
         size : size of the test set prediction, max is 10000
 
     Processes & adds the inference time on the tests to the result df + computes time/img 
-    # TODO output accuracy
     """
+    size = 10000
     model = keras.models.load_model('./tflite/bench_model')
     train_sample = x_test[:size]
     test_sample = y_test[:size]

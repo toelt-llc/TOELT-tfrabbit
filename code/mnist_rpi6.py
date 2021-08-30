@@ -12,7 +12,7 @@ from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
 
-dfres =  pd.DataFrame( columns=["Layers","Execution time ", "Prediction time", "By image", 'Loss', 'Acc'])
+dfres =  pd.DataFrame(columns=["Neurons","Layers","Training time", "Prediction time", "By image", 'Loss', 'Acc'])
 exec_times = []
 pred_times_tot = []
 pred_times1 = []
@@ -37,24 +37,22 @@ def main(argv):
 
     """
     neurons_list = ''
-    predictions = ''
     result = ''
+    predictions = 10000
     try:
-        opts, args = getopt.getopt(argv,"hn:p:r:l:",["neurons=","predictions=","saved_result=","layers="])
+        opts, args = getopt.getopt(argv,"hn:r:l:",["neurons=","saved_result=","layers="])
         if len(sys.argv) == 1:
             print('! No args !')
-            print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname')
+            print('Usage : args.py -n \'neurons\' -r resultname -l layers')
     except getopt.GetoptError:
-        print('Usage : args.py -n \'neurons\' -p <npredictions> -r resultname -l layers')
+        print('Usage : args.py -n \'neurons\' -r resultname -l layers')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage : args.py -n \'neurons\' p <npredictions> -r resultname -l layers')
+            print('Usage : args.py -n \'neurons\'  -r resultname -l layers')
             sys.exit()
         elif opt in ("-n", "--neurons"):
             neurons_list = convert(arg)
-        elif opt in ("-p", "--npredictions"):
-            predictions = int(arg)
         elif opt in ("-r", "--saved_result"):
             result = arg
         elif opt in ("-l", "layers"):
@@ -69,14 +67,12 @@ def main(argv):
     for n in neurons_list:
         for l in layers:
             run_model(n, int(l), x_train, x_test, y_train, y_test)
-            predict_time(n, l, predictions, x_train, y_train)
 
-    dfres.index.name = 'Neurons'
+    #dfres.index.name = 'Neurons'
     dfres.to_csv('./saved_results/'+ result + '.csv')
     #dfres.to_pickle('./saved_results/' + result + '.pkl')
     print(dfres)
     print('Prediction time is over {} testing examples. '.format(predictions))
-    print(newres)
 
 
     
@@ -118,10 +114,9 @@ def run_model(n, l, x_train, x_test, y_train, y_test):
     """
     Args:
         n : the number of neurons, specified by the user
+        l : the number of layers
         datasets : used by .fit method to train the network
-    Returns:
-        none, but saves the model in /tflite/bench_model/ for further use
-
+        
     Sequential model with Optimizer : Adam . Loss function : MeanSquaredError
 
     Processes & adds the training time to the result df 
@@ -142,22 +137,12 @@ def run_model(n, l, x_train, x_test, y_train, y_test):
     end = time.time()
     
     exec_times.append(round(end-start, 2))
-    dfres.loc[n] = round(end-start, 2)
+    training_time = round(end-start, 2)
     
-    model.save('./tflite/bench_model')
+
     #v6
     print(model.summary())
-    
-
-def predict_time(n, l, size, x_test, y_test):
-    """
-    Args:
-        n    : the number of neurons, specified by the user
-        size : size of the test set prediction, max is 10000
-
-    Processes & adds the inference time on the tests to the result df + computes time/img 
-    """
-    model = keras.models.load_model('./tflite/bench_model')
+    size = 10000
     train_sample = x_test[:size]
     test_sample = y_test[:size]
 
@@ -169,20 +154,22 @@ def predict_time(n, l, size, x_test, y_test):
     pred_times_tot.append(end1-start1)
     pred_times1.append(img_time)
     
-    dfres.loc[n]['Prediction time'] = round(end1-start1, 2)
-    dfres.loc[n][3] = img_time
     #v5
     print('Evaluation .....')
+
     eval = model.evaluate(x_test, y_test)
-    #newres[n] = eval
-    dfres.loc[n]['Loss'] = round(eval[0],2)
-    dfres.loc[n]['Acc'] = round(eval[1],2)
     #v6
-    dfres.loc[n]['Layers'] = int(l)
+    neur = int(n)
+    dfres['Neurons'] = n
+    dfres['Layers'] = int(l)
+    dfres.set_index(['Neurons', 'Layers'])
+    dfres.loc['Training time'] = training_time
+    dfres.loc['Prediction time'] = round(end1-start1, 2)
+    dfres.loc['By image'] = img_time
+    dfres.loc['Loss'] = round(eval[0],2)
+    dfres.loc['Acc'] = round(eval[1],2)
+    
     #newversion
-
-
-
 
 if __name__ == "__main__":
    main(sys.argv[1:])
