@@ -1,3 +1,11 @@
+## 31.08 Push : 
+The relevent figures are in the [results folder](https://github.com/toelt-llc/tfrabbit/tree/main/code/saved_results). 
+With [animated](https://github.com/toelt-llc/tfrabbit/tree/main/code/saved_results/animated) and [static](https://github.com/toelt-llc/tfrabbit/tree/main/code/saved_results) versions. 
+
+The notebooks generating these results are [here] in the notebooks fodler (https://github.com/toelt-llc/tfrabbit/tree/main/code/notebooks) . 
+`plot_results`for the static ones. 
+`animated` for the GIFs.
+
 ## First benchmark 
 The first benchmark `mnist_rpi.py` can be used to verifiy the installation of TensorFlow, and if a simple network can be launched on it.
 
