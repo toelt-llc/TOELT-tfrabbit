@@ -1,3 +1,8 @@
+# 31.08 Arnaud's merge 
+The informations about the plots are given in the code README [here](https://github.com/a-gucciardi/tfrabbit/blob/main/code/Readme.md#3108-push-) . 
+The rest of the folders have a short readme to explain the organisation. 
+
+
 # tfrabbit
 
 Version 1.0
