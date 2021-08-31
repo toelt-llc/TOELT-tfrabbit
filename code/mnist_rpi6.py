@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import sys, getopt
+from typing import NewType
+from keras import layers
 import tensorflow as tf
 import pandas as pd
 import numpy as np
@@ -12,10 +14,16 @@ from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
 
-dfres =  pd.DataFrame(columns=["Neurons","Layers","Training time", "Prediction time", "By image", 'Loss', 'Acc'])
+dfres =  pd.DataFrame(columns=["Layers","Training time", "Prediction time", "By image", 'Loss', 'Acc'])
 exec_times = []
 pred_times_tot = []
 pred_times1 = []
+
+#v6
+layers = {}
+train = {}
+pred = {}
+
     
 # mnist_rpi5 but with a possibility to precise the list of layers 
 # Not complete, the results csv fornat has to change 
@@ -69,6 +77,8 @@ def main(argv):
             run_model(n, int(l), x_train, x_test, y_train, y_test)
 
     #dfres.index.name = 'Neurons'
+    #layers.update()
+
     dfres.to_csv('./saved_results/'+ result + '.csv')
     #dfres.to_pickle('./saved_results/' + result + '.pkl')
     print(dfres)
@@ -160,14 +170,33 @@ def run_model(n, l, x_train, x_test, y_train, y_test):
     eval = model.evaluate(x_test, y_test)
     #v6
     neur = int(n)
-    dfres['Neurons'] = n
-    dfres['Layers'] = int(l)
-    dfres.set_index(['Neurons', 'Layers'])
-    dfres.loc['Training time'] = training_time
-    dfres.loc['Prediction time'] = round(end1-start1, 2)
-    dfres.loc['By image'] = img_time
-    dfres.loc['Loss'] = round(eval[0],2)
-    dfres.loc['Acc'] = round(eval[1],2)
+    #dfres['Neurons'] = n
+    #dfres['Layers'] = int(l)
+    #dfres.set_index(['Neurons', 'Layers'])
+    #dfres.loc['Training time'] = training_time
+    #dfres.loc['Prediction time'] = round(end1-start1, 2)
+    #dfres.loc['By image'] = img_time
+    Neurons = n  
+    Layers = {n:l}
+    Train = training_time
+    Pred = round(end1-start1, 2)
+    Img = img_time
+    Loss = round(eval[0],2)
+    acc = round(eval[1],2)
+    df = pd.DataFrame()
+
+    #dfres =  pd.DataFrame(columns=["Layers","Training time", "Prediction time", "By image", 'Loss', 'Acc'])
+    dfres[n]['Layers'] = Layers
+    dfres[n]['Training time'] = Train
+    dfres[n]['Prediction time'] = Pred
+    dfres[n]['By image'] = Img
+    dfres[n]['Loss'] = Loss
+    dfres[n]['Acc'] = acc
+    print(Train)
+    print(Pred)
+    print(img_time)
+    print('Loss', Loss)
+    print('Dataframe', df)
     
     #newversion
 

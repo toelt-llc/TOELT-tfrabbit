@@ -1,6 +1,1 @@
 ,Neurons,Layers,Training time,Prediction time,By image,Loss,Acc
-Training time,6.19,6.19,6.19,6.19,6.19,6.19,6.19
-Prediction time,0.2,0.2,0.2,0.2,0.2,0.2,0.2
-By image,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-Loss,0.08,0.08,0.08,0.08,0.08,0.08,0.08
-Acc,0.3,0.3,0.3,0.3,0.3,0.3,0.3
