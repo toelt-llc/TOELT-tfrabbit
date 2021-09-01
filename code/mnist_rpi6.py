@@ -14,7 +14,8 @@ from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
 
-dfres =  pd.DataFrame(columns=["Layers","Training time", "Prediction time", "By image", 'Loss', 'Acc'])
+#dfres =  pd.DataFrame(columns=["Layers","Training time", "Prediction time", "By image", 'Loss', 'Acc'])
+dicres = {'Neurons':[],"Layers":[],"Training time":[], "Prediction time":[], "By image":[], 'Loss':[], 'Acc':[]}
 exec_times = []
 pred_times_tot = []
 pred_times1 = []
@@ -68,6 +69,7 @@ def main(argv):
 
     if len(sys.argv) > 1:
         print('Neurons array is :', neurons_list)
+        print('Layers array is :', layers)
         print('Prediction is :', predictions)
     
     x_train, x_test, y_train, y_test = loading()
@@ -76,13 +78,15 @@ def main(argv):
         for l in layers:
             run_model(n, int(l), x_train, x_test, y_train, y_test)
 
-    #dfres.index.name = 'Neurons'
-    #layers.update()
-
-    dfres.to_csv('./saved_results/'+ result + '.csv')
-    #dfres.to_pickle('./saved_results/' + result + '.pkl')
-    print(dfres)
     print('Prediction time is over {} testing examples. '.format(predictions))
+
+    #v6
+    #print(dicres)
+    dfres = pd.DataFrame.from_dict(dicres)
+    print('Neurons : {}, Layers : {}, Prediction : {}, Result file : {}'.format(neurons_list, layers, predictions, result))
+    print('Saved dataframe is :', dfres)
+    
+    dfres.to_csv('./saved_results/'+ result + '.csv')
 
 
     
@@ -151,7 +155,7 @@ def run_model(n, l, x_train, x_test, y_train, y_test):
     
 
     #v6
-    print(model.summary())
+    #print(model.summary())
     size = 10000
     train_sample = x_test[:size]
     test_sample = y_test[:size]
@@ -169,36 +173,20 @@ def run_model(n, l, x_train, x_test, y_train, y_test):
 
     eval = model.evaluate(x_test, y_test)
     #v6
-    neur = int(n)
-    #dfres['Neurons'] = n
-    #dfres['Layers'] = int(l)
-    #dfres.set_index(['Neurons', 'Layers'])
-    #dfres.loc['Training time'] = training_time
-    #dfres.loc['Prediction time'] = round(end1-start1, 2)
-    #dfres.loc['By image'] = img_time
-    Neurons = n  
-    Layers = {n:l}
     Train = training_time
     Pred = round(end1-start1, 2)
     Img = img_time
     Loss = round(eval[0],2)
     acc = round(eval[1],2)
-    df = pd.DataFrame()
-
-    #dfres =  pd.DataFrame(columns=["Layers","Training time", "Prediction time", "By image", 'Loss', 'Acc'])
-    dfres[n]['Layers'] = Layers
-    dfres[n]['Training time'] = Train
-    dfres[n]['Prediction time'] = Pred
-    dfres[n]['By image'] = Img
-    dfres[n]['Loss'] = Loss
-    dfres[n]['Acc'] = acc
-    print(Train)
-    print(Pred)
-    print(img_time)
-    print('Loss', Loss)
-    print('Dataframe', df)
     
-    #newversion
+    #dicres = {}
+    dicres['Neurons'].append(n)
+    dicres['Layers'].append(l)
+    dicres['Training time'].append(Train)
+    dicres['Prediction time'].append(Pred)
+    dicres['By image'].append(Img)
+    dicres['Loss'].append(Loss)
+    dicres['Acc'].append(acc)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
