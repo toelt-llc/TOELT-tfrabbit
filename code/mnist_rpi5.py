@@ -70,7 +70,7 @@ def main(argv):
 
     dfres.index.name = 'Neurons'
     ## !!! to change depending on the device
-    dfres.to_csv('./saved_results/pi/'+ result + '.csv')
+    dfres.to_csv('./saved_results/'+ result + '.csv')
     #dfres.to_pickle('./saved_results/' + result + '.pkl')
     print(dfres)
     print('Prediction time is over {} testing examples. '.format(predictions))
