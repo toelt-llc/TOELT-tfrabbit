@@ -85,8 +85,7 @@ def main(argv):
     dfres = pd.DataFrame.from_dict(dicres)
     print('Neurons : {}, Layers : {}, Prediction : {}, Result file : {}'.format(neurons_list, layers, predictions, result))
     print('Saved dataframe is :', dfres)
-    
-    dfres.to_csv('./saved_results/'+ result + '.csv')
+    dfres.to_csv('./saved_results/'+ result + '.csv', index=False)
 
 
     
