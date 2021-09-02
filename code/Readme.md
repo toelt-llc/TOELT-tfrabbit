@@ -6,6 +6,12 @@
 - `test`: this is a personal folder used for testing. Files contained here are not yet finalized.
 - `tflite`: this folder contains notebook that deal with the conversion and testing of TFLite.
 
+### Files
+
+- `mnist_rpi6.py`: the script that train different networks on any system. Options and how to use it, is documented in the file. This is the file that has been used for the results.
+- `run_pi.sh`: this is a shell script that calls the `mnist_rpi6.py` with different options for benchmarking. This script contains a loop to get averages and standard deviation of the different runs.
+- `run_frodo.sh`: this is a shell script that perform the same task as `run_pi.sh` but saves the results in different folder, and has differnt options. For example on frodo larger networks can be run.
+
 
 ## 31.08 Push : 
 The relevent figures are in the [results folder](https://github.com/toelt-llc/tfrabbit/tree/main/code/saved_results). 
