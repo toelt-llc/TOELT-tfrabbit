@@ -1,3 +1,12 @@
+## Folders Content
+
+- `bench_model`: this folder contains `pb` files, that are being obtained by models. No notebook or CSV files are here.
+- `notebooks`: contains the notebook that are used for testing and plotting.
+- `saved_results`: it contains figures (animated and not) and then results for frodo, rpi, mac in separated folders. The results are in form of plots of CSV files.
+- `test`: this is a personal folder used for testing. Files contained here are not yet finalized.
+- `tflite`: this folder contains notebook that deal with the conversion and testing of TFLite.
+
+
 ## 31.08 Push : 
 The relevent figures are in the [results folder](https://github.com/toelt-llc/tfrabbit/tree/main/code/saved_results). 
 With [animated](https://github.com/toelt-llc/tfrabbit/tree/main/code/saved_results/animated) and [static](https://github.com/toelt-llc/tfrabbit/tree/main/code/saved_results) versions. 
