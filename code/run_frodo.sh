@@ -1,10 +1,10 @@
 #!/bin/bash
-declare -i runs=10
+declare -i runs=1
 for ((i=1; i<=${runs}; i++))
 do  
     echo 'Run num '${i}' of '${runs}
     echo '_________________________'
-    string="/frodo/batch2_"${i}
-    python3 mnist_rpi6.py -n 5,10,50,128,256,512,1024,1500,2048,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000 -l 2,4,6,8 -r $string
+    string="/frodo/single"${i}
+    python3 mnist_rpi5.py -n 10000  -r $string
 done
 echo 'Runs completed : '${runs}'/'${runs}
