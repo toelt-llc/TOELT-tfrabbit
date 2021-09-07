@@ -16,7 +16,10 @@ dfres =  pd.DataFrame( columns=["Execution time ", "Prediction time", "By image"
 exec_times = []
 pred_times_tot = []
 pred_times1 = []
-    
+
+# Mnist benchmark which take the number of desired neurons on the 2 dense inner layers. 
+# The design of the network and the training stay the same, layers=2, epochs=10, batch_size=128
+
 # mnist_rpi4 but with a different network which gives loss & accuracy results
 # last layer = softmax activation
 # opt = sgd
