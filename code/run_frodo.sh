@@ -5,6 +5,6 @@ do
     echo 'Run num '${i}' of '${runs}
     echo '_________________________'
     string="/frodo/100k"${i}
-    python3 mnist_rpi5.py -n 10000,20000,30000,40000,50000,60000,70000,80000,90000,100000  -r $string
+    python3 mnist_rpi5.py -n 10000,20000,30000,40000 -r $string
 done
 echo 'Runs completed : '${runs}'/'${runs}
