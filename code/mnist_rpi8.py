@@ -104,7 +104,7 @@ def load_data(data):
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     if data == 'fashion':
         (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
-    assert x_train.shape == (60000, 28, 28)
+    assert x_train.shape == (60000, 28, 28) # only valuable for mnists datasets
     assert x_test.shape == (10000, 28, 28)
     assert y_train.shape == (60000,)
     assert y_test.shape == (10000,) 
