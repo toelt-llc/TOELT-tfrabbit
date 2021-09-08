@@ -1,0 +1,2 @@
+Neurons,Layers,Training time,Prediction time,By image,Loss,Acc
+250,2,19.49,0.49,0.0,0.12,0.38
