@@ -6,5 +6,6 @@
 - `frodo2.csv`: one run as described above using only one single GPU.
 - `frodo3.csv`: one run as described above using three GPUs.
 - `f_averages.csv`: this files contain the average of the 10 runs.
-- `batch2_<NUMBER>`: with NUMBER =1,...10. It will contain the results of 10 runs on frodo with a number of neurons up to 10000, and a number of layers up to 8. 
-  There will be 10 of those files when the runs are finalized.
+- `batch2_<NUMBER>`: with NUMBER =1,2,3. Contains the results of 3 runs on frodo.  
+  Running setup : mnist_rpi6.py -n 5,10,50,256,512,1024,1500,2048,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000  
+  -l 2,4,6,8 
