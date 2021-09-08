@@ -1,0 +1,3 @@
+- `mnist_rpi7.py`: similar as mnist_rpi6, with a polished and documented code. Model trains on fashion_mnist rather than mnist.  This is the file used for the fashion training test (batch3_*) results
+- `mnist_rpi6.py`: the script that train different networks on any system. Options and how to use it, is documented in the file. This is the file that has been used for the results involving layers options (batch2_*.csv).
+- `mnist_rpi5.py`: previous version of mnist_rpi6.py, with a fixed 2 inner layers, will be moved to `old` in the future.

@@ -12,37 +12,43 @@ from keras.layers import Dense, Flatten
 # Global results dictionnary, used in main() and run_model() functions 
 dicres = {'Neurons':[],"Layers":[],"Training time":[], "Prediction time":[], "By image":[], 'Loss':[], 'Acc':[]}
     
-
-# Goal : v7 but with an option on the dataset, default is mnist
-# mnist_rpi8.py -n neurons -l layers -r resname -d {mnist|fashion}
+# Goal : v7 but with an option on the dataset(=mnist), on the epochs(=10), on the batch_size(=128)
+# mnist_rpi8.py -d {mnist|fashion} -n neurons -l layers  -e epochs -b batch_size -r resultname
 
 def main(argv):
     """
     1. Manages the args
-    neurons     : amount of neurons in the n inner layers of the current NN (n = 2)
-    predictions : amount of test examples on yhich the trained model is then infered
-    resultname  : name used for this specific prediction to produce the right .csv, (use the device name)
+    neurons,layers     : amount of neurons in the l inner layers of the current NN 
+    dataset            : on which dataset the network is trained, default mnist
+    epochs, batch_size : model.fit parameters
+    predictions        : amount of test examples on which the trained model is then infered
+    resultname         : name used for this specific prediction to produce the right .csv, (use the device name)
 
     2. Runs the data loading, model training and prediction functions
 
     3. Saves the result -- (Also prints result dataframe when completed)
-    Under code/saved/results/ , with the given csv name
+    Under code/saved_results/ , with the given csv name
     """
-    neurons_list = ''
-    result = ''
+    neurons_list = '5,10'
+    result = 'unknown'  # if no name is specified
+    layers = [2]
     dataset = 'mnist'
-    predictions = 10000
+    epochs = 10
+    batch_size = 128
+    predictions = 10000 # ie. nb of inference examples
+
+    usage = 'Usage : mnist_rpi8.py -d {mnist|fashion} -n \'neurons\' -l layers  -e epochs -b batch_size -r resultname'
     try:
-        opts, args = getopt.getopt(argv,"hn:l:r:d:")
+        opts, args = getopt.getopt(argv,"hn:l:r:d:e:b:")
         if len(sys.argv) == 1:
             print('! No args !')
-            print('Usage : args.py -n \'neurons\' -l layers -r name -d dataset')
+            print(usage)
     except getopt.GetoptError:
-        print('Usage : args.py -n \'neurons\' -l layers -r name -d dataset')
+        print(usage)
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage : args.py -n \'neurons\' -l layers -r name -d dataset')
+            print(usage)
             sys.exit()
         elif opt in ("-n", "--neurons"):
             neurons_list = convert(arg)
@@ -52,26 +58,31 @@ def main(argv):
             layers = convert(arg)
         elif opt == '-d':
             dataset = arg
+        elif opt == '-e':
+            epochs = int(arg)
+        elif opt == '-b':
+            batch_size = int(arg)
     if len(sys.argv) > 1:
-        print('Neurons array is :', neurons_list)
-        print('Layers array is :', layers)
-        print('Prediction is :', predictions)
+        print('Dataset :', dataset)
+        print('Neurons array :', neurons_list)
+        print('Layers array :', layers)
+        print('Prediction :', predictions)
+        print('Epochs :', epochs)
+        print('Batch size :', batch_size)
     
     x_train, x_test, y_train, y_test = load_data(dataset)
 
     for n in neurons_list:
         for l in layers:
-            run_model(n, int(l), x_train, x_test, y_train, y_test)
-
-    print('Prediction time is over {} testing examples. '.format(predictions))
+            run_model(n, int(l), x_train, x_test, y_train, y_test, epochs, batch_size)
 
     # v8
     dfres = pd.DataFrame.from_dict(dicres)
     print('Training dataset is :', dataset)
-    print('Neurons : {}, Layers : {}, Prediction : {}, Result file : {}'.format(neurons_list, layers, predictions, result))
+    print('Neurons : {}, Layers : {}, Epochs : {}, Batch_size : {}, Inference exs : {}, Result file : {}'
+        .format(neurons_list, layers, epochs, batch_size, predictions, result))
     print('Saved dataframe :', dfres)
     dfres.to_csv('./saved_results/'+ result + '.csv', index=False)
-
     
 def convert(string):
     """
@@ -87,7 +98,7 @@ def load_data(data):
     Converts categories into numbers from 0 to 9
     Returns x_train, x_test, y_train, y_test
 
-    # TODO use from sklearn.preprocessing import OneHotEncoder
+    # from sklearn.preprocessing import OneHotEncoder
     https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
     """
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -116,16 +127,17 @@ def load_data(data):
     
     return x_train, x_test, y_train, y_test
 
-def run_model(n, l, x_train, x_test, y_train, y_test):
+def run_model(n, l, x_train, x_test, y_train, y_test, epochs, batch_size):
     """
     #TODO: use a real case model, cnn ? ; add the epochs and batch_size parameters 
+            add new args
     Args:
-        n : the number of neurons, specified by the user
-        l : the number of layers
-        datasets : used by .fit method to train the network
+        n : the number of neurons, specified by the user, default (5,10)
+        l : the number of layers, default (2)
+        datasets : used by .fit method to train the network, default (mnist)
+        epochs & batch_size : model.fit parameters, default (10,128)
         
     Sequential model with Optimizer : Adam . Loss function : MeanSquaredError
-    epochs = 10, batch_size=128
 
     Processes & adds the training time for the result dataframe 
     """
@@ -143,41 +155,32 @@ def run_model(n, l, x_train, x_test, y_train, y_test):
     # Model fit, timed
     print("===== Step : ", n, '=====')
     start = time.time()
-    model.fit(x_train, y_train, epochs=10,validation_data=(x_test,y_test), batch_size=128)
+    model.fit(x_train, y_train, epochs=epochs,validation_data=(x_test,y_test), batch_size=batch_size)
     end = time.time()
-    
     training_time = round(end-start, 2)
     
-    #v6 + 7
-    
+    # Timed inference
     size = 10000
     test_sample = x_test[:size]
-    #test_sample = y_test[:size]
-
-    # Timed inference
-    start1 = time.time()
+    start_test = time.time()
     model.predict(test_sample)
-    end1 = time.time()
-    img_time = round((end1-start1)/size, 4 ) # Inference time for each image
+    end_test = time.time()
+    inf_time = round(end_test-start_test, 2)        # Total inference time
+    inf_img = round((end_test-start_test)/size, 4 ) # Inference time for each image
 
-    # Eval
+    # Model eval
     print('Evaluation .....')
     eval = model.evaluate(x_test, y_test)
-
-    # From v6, not necessary but more readable
-    Train = training_time
-    Pred = round(end1-start1, 2)
-    Img = img_time
-    Loss = round(eval[0],2)
+    loss = round(eval[0],2)
     acc = round(eval[1],2)
     
     # Dicres is the new way to save results, then turned into a pd.Df for further save(and display).
     dicres['Neurons'].append(n)
     dicres['Layers'].append(l)
-    dicres['Training time'].append(Train)
-    dicres['Prediction time'].append(Pred)
-    dicres['By image'].append(Img)
-    dicres['Loss'].append(Loss)
+    dicres['Training time'].append(training_time)
+    dicres['Inference time'].append(inf_time)
+    dicres['By image'].append(inf_img)
+    dicres['Loss'].append(loss)
     dicres['Acc'].append(acc)
 
 if __name__ == "__main__":
