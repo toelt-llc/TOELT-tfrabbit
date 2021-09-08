@@ -3,10 +3,9 @@ import sys, getopt
 import pandas as pd
 import numpy as np
 import time
-import sklearn
 
 from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.datasets import fashion_mnist
+from tensorflow.keras.datasets import mnist, fashion_mnist
 from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
@@ -59,8 +58,7 @@ def main(argv):
         print('Prediction is :', predictions)
     
     x_train, x_test, y_train, y_test = load_data()
-    x_train = sklearn.preprocessing.normalize(x_train, norm='l2')
-    
+
     for n in neurons_list:
         for l in layers:
             run_model(n, int(l), x_train, x_test, y_train, y_test)
@@ -91,14 +89,12 @@ def load_data():
     # TODO use from sklearn.preprocessing import OneHotEncoder
     https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
     """
-    (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
     assert x_train.shape == (60000, 28, 28)
     assert x_test.shape == (10000, 28, 28)
     assert y_train.shape == (60000,)
     assert y_test.shape == (10000,) 
 
-    # Normalization
-    x_train /= 255.0
 
     temp = []
     for i in range(len(y_train)):
@@ -108,6 +104,12 @@ def load_data():
     for i in range(len(y_test)):    
         temp.append(to_categorical(y_test[i], num_classes=10))
     y_test = np.array(temp)
+
+    # Normalization v7, the load.data() returns uint8 arrays
+    x_train = x_train.copy()
+    x_test = x_test.copy()
+    x_train = x_train/255
+    x_test = x_test/255
     
     return x_train, x_test, y_train, y_test
 
