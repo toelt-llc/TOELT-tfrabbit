@@ -3,6 +3,7 @@ import sys, getopt
 import pandas as pd
 import numpy as np
 import time
+import sklearn
 
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.datasets import fashion_mnist
@@ -58,6 +59,7 @@ def main(argv):
         print('Prediction is :', predictions)
     
     x_train, x_test, y_train, y_test = load_data()
+    x_train = sklearn.preprocessing.normalize(x_train, norm='l2')
     
     for n in neurons_list:
         for l in layers:
@@ -95,6 +97,9 @@ def load_data():
     assert y_train.shape == (60000,)
     assert y_test.shape == (10000,) 
 
+    # Normalization
+    x_train /= 255.0
+
     temp = []
     for i in range(len(y_train)):
         temp.append(to_categorical(y_train[i], num_classes=10))
@@ -109,6 +114,7 @@ def load_data():
 def run_model(n, l, x_train, x_test, y_train, y_test):
     """
     #TODO: use a real case model, cnn ? ; add the epochs and batch_size parameters 
+            NORMALIZATION
     Args:
         n : the number of neurons, specified by the user
         l : the number of layers
