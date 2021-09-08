@@ -12,8 +12,9 @@ from keras.layers import Dense, Flatten
 # Global results dictionnary, used in main() and run_model() functions 
 dicres = {'Neurons':[],"Layers":[],"Training time":[], "Prediction time":[], "By image":[], 'Loss':[], 'Acc':[]}
     
-# mnist_rpi5 (+6) but with a possibility to precise the list of layers 
-# Not complete, the results csv format has to change 
+
+# Goal : v7 but with an option on the dataset, default is mnist
+# mnist_rpi8.py -n neurons -l layers -r resname -d {mnist|fashion}
 
 def main(argv):
     """
@@ -29,18 +30,19 @@ def main(argv):
     """
     neurons_list = ''
     result = ''
+    dataset = 'mnist'
     predictions = 10000
     try:
-        opts, args = getopt.getopt(argv,"hn:r:l:",["neurons=","saved_result=","layers="])
+        opts, args = getopt.getopt(argv,"hn:l:r:d:")
         if len(sys.argv) == 1:
             print('! No args !')
-            print('Usage : args.py -n \'neurons\' -r resultname -l layers')
+            print('Usage : args.py -n \'neurons\' -l layers -r name -d dataset')
     except getopt.GetoptError:
-        print('Usage : args.py -n \'neurons\' -r resultname -l layers')
+        print('Usage : args.py -n \'neurons\' -l layers -r name -d dataset')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('Usage : args.py -n \'neurons\'  -r resultname -l layers')
+            print('Usage : args.py -n \'neurons\' -l layers -r name -d dataset')
             sys.exit()
         elif opt in ("-n", "--neurons"):
             neurons_list = convert(arg)
@@ -48,13 +50,14 @@ def main(argv):
             result = arg
         elif opt in ("-l", "layers"):
             layers = convert(arg)
-
+        elif opt == '-d':
+            dataset = arg
     if len(sys.argv) > 1:
         print('Neurons array is :', neurons_list)
         print('Layers array is :', layers)
         print('Prediction is :', predictions)
     
-    x_train, x_test, y_train, y_test = load_data()
+    x_train, x_test, y_train, y_test = load_data(dataset)
 
     for n in neurons_list:
         for l in layers:
@@ -62,10 +65,11 @@ def main(argv):
 
     print('Prediction time is over {} testing examples. '.format(predictions))
 
-    #v6 + 7
+    # v8
     dfres = pd.DataFrame.from_dict(dicres)
+    print('Training dataset is :', dataset)
     print('Neurons : {}, Layers : {}, Prediction : {}, Result file : {}'.format(neurons_list, layers, predictions, result))
-    print('Saved dataframe is :', dfres)
+    print('Saved dataframe :', dfres)
     dfres.to_csv('./saved_results/'+ result + '.csv', index=False)
 
     
@@ -77,7 +81,7 @@ def convert(string):
     li = list(string.split(","))
     return li
 
-def load_data():
+def load_data(data):
     """
     Loads the dataset : classic fashion_mnist from Keras, checks if shape is as expected
     Converts categories into numbers from 0 to 9
@@ -87,12 +91,14 @@ def load_data():
     https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
     """
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
+    if data == 'fashion':
+        (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
     assert x_train.shape == (60000, 28, 28)
     assert x_test.shape == (10000, 28, 28)
     assert y_train.shape == (60000,)
     assert y_test.shape == (10000,) 
 
-
+    # This part may need an update for fashion_mnist
     temp = []
     for i in range(len(y_train)):
         temp.append(to_categorical(y_train[i], num_classes=10))
@@ -113,7 +119,6 @@ def load_data():
 def run_model(n, l, x_train, x_test, y_train, y_test):
     """
     #TODO: use a real case model, cnn ? ; add the epochs and batch_size parameters 
-            NORMALIZATION
     Args:
         n : the number of neurons, specified by the user
         l : the number of layers
