@@ -1,6 +1,6 @@
-
 #!/usr/bin/env python3
 import sys, getopt
+import tensorflow as tf
 import pandas as pd
 import numpy as np
 import time
@@ -11,7 +11,8 @@ from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
 # Global results dictionnary, used in main() and run_model() functions 
-dicres = {'Neurons':[],"Layers":[],"Training time":[], "Inference time":[], "By image":[], 'Loss':[], 'Acc':[]}
+dicres = {'Neurons':[],"Layers":[],"Training time":[], "Inference time":[], "By image":[], 'Loss':[], 'Acc':[],
+         'Conversion time':[], 'Interpret time':[], 'Lite Inf time':[]}
     
 # Goal : v8 but the model is also converterd and ran as tflite quantized
 # - keep in mind, float16 option
@@ -75,7 +76,8 @@ def main(argv):
 
     for n in neurons_list:
         for l in layers:
-            run_model(n, int(l), x_train, x_test, y_train, y_test, epochs, batch_size)
+            mod = run_model(n, int(l), x_train, x_test, y_train, y_test, epochs, batch_size)
+            run_tflite(mod, dataset)
 
     # v8
     # dfres is the results from classical tf
@@ -124,8 +126,8 @@ def load_data(data):
     # Normalization v7, the load.data() returns uint8 arrays
     x_train = x_train.copy()
     x_test = x_test.copy()
-    x_train = x_train/255
-    x_test = x_test/255
+    x_train = x_train.astype(np.float32)/255
+    x_test = x_test.astype(np.float32)/255
     
     return x_train, x_test, y_train, y_test
 
@@ -189,9 +191,68 @@ def run_model(n, l, x_train, x_test, y_train, y_test, epochs, batch_size):
 
     return model
 
-def run_tflite(tf_model):
+
+def run_tflite(tf_model, data):
+    x_train, x_test, y_train, y_test = load_data(data)
+    print(x_train.dtype)
+    start_conv = time.time()
+    # TODO set option to read it from saved model or from existing model
+    # for now : uses keras (existing model)
+    #model_path = './tflite/model2_mnist/'
+    #converter1 = tf.lite.TFLiteConverter.from_saved_model(model_path)
+    converter1 = tf.lite.TFLiteConverter.from_keras_model(tf_model)
+    def representative_data_gen():
+        for input_value in tf.data.Dataset.from_tensor_slices(x_train).batch(1).take(1000):
+            #input_value = input_value.astype(np.float32)
+            yield [input_value]
+    converter1.representative_dataset = representative_data_gen
+    converter1.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+    converter1.optimizations = [tf.lite.Optimize.DEFAULT]
+    converter1.inference_input_type = tf.uint8
+    converter1.inference_output_type = tf.uint8
+
+    quant_model = converter1.convert()
+    end_conv = time.time()
+    dicres['Conversion time'].append(end_conv-start_conv)
+
+    start_int = time.time()
+    interpreter = tf.lite.Interpreter(model_content=quant_model)
+
+    interpreter.allocate_tensors()
+    input_details = interpreter.get_input_details()
+    input_type = interpreter.get_input_details()[0]['dtype']
+    # Quantization parameters : 
+    input_scale, input_zero_point = input_details[0]["quantization"]
+
+    # whole set, currently only supports test_set as an array
+    print(np.shape(y_train))
+    print(interpreter.get_output_details())
+    #interpreter.allocate_tensors()
+    interpreter.resize_tensor_input(input_index=input_details[0]['index'], tensor_size=(np.shape(y_train)))
+    interpreter.allocate_tensors()
+
+    # 8bit quantization approximation
+    test_images_q = y_train / input_scale + input_zero_point
+    test_images_q = np.reshape(test_images_q.astype(input_type), np.shape(y_train)) # wordy line
+
+    # Loading into the tensor
+    interpreter.set_tensor(input_details[0]['index'], test_images_q)
+    end_int = time.time()
+
+    dicres['Interpret time'].append(end_int-start_int)
     
-    return null
+    output_details = interpreter.get_output_details()
+    start_inf = time.time()
+    interpreter.invoke()
+    end_inf = time.time()
+
+    inference = interpreter.get_tensor(output_details[0]['index'])
+    predictions = np.argmax(inference, axis=1)
+
+    dicres['Lite Inf time'].append(end_inf-start_inf)
+    print('Quantized model accuracy : ', (predictions == y_test).mean())
+
+    return predictions
 
 
 if __name__ == "__main__":
