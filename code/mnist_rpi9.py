@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 import sys, getopt
 import pandas as pd
@@ -12,8 +13,8 @@ from keras.layers import Dense, Flatten
 # Global results dictionnary, used in main() and run_model() functions 
 dicres = {'Neurons':[],"Layers":[],"Training time":[], "Inference time":[], "By image":[], 'Loss':[], 'Acc':[]}
     
-# Goal : v7 but with an option on the dataset(=mnist), on the epochs(=10), on the batch_size(=128)
-# mnist_rpi8.py -d {mnist|fashion} -n neurons -l layers  -e epochs -b batch_size -r resultname
+# Goal : v8 but the model is also converterd and ran as tflite quantized
+# - keep in mind, float16 option
 
 def main(argv):
     """
@@ -185,6 +186,13 @@ def run_model(n, l, x_train, x_test, y_train, y_test, epochs, batch_size):
     dicres['By image'].append(inf_img)
     dicres['Loss'].append(loss)
     dicres['Acc'].append(acc)
+
+    return model
+
+def run_tflite(tf_model):
+    
+    return null
+
 
 if __name__ == "__main__":
    main(sys.argv[1:])
