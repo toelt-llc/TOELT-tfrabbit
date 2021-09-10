@@ -10,7 +10,7 @@ from tensorflow.keras import Sequential
 from keras.layers import Dense, Flatten
 
 # Global results dictionnary, used in main() and run_model() functions 
-dicres = {'Neurons':[],"Layers":[],"Training time":[], "Prediction time":[], "By image":[], 'Loss':[], 'Acc':[]}
+dicres = {'Neurons':[],"Layers":[],"Training time":[], "Inference time":[], "By image":[], 'Loss':[], 'Acc':[]}
     
 # Goal : v7 but with an option on the dataset(=mnist), on the epochs(=10), on the batch_size(=128)
 # mnist_rpi8.py -d {mnist|fashion} -n neurons -l layers  -e epochs -b batch_size -r resultname
@@ -29,7 +29,7 @@ def main(argv):
     3. Saves the result -- (Also prints result dataframe when completed)
     Under code/saved_results/ , with the given csv name
     """
-    neurons_list = '5,10'
+    neurons_list = [5,10]
     result = 'unknown'  # if no name is specified
     layers = [2]
     dataset = 'mnist'
