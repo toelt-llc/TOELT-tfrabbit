@@ -127,3 +127,6 @@ run_inference(interpreter)
 print('Conversion time : {}, Inference time {}'.format(round(inf_time[0],2), round(inf_time[1],2)))
 print('Classic model accuracy : ', (res_pred == test_labels).mean() )
 print('With inference time : ', pred_time)
+
+
+open("converted_model.tflite", "wb").write(quanted_model)
