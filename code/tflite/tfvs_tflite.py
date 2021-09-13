@@ -12,8 +12,12 @@
 import tensorflow as tf 
 import numpy as np
 import time
+import os
 
 from tensorflow import keras
+
+if (os.getcwd() == '/Users/arnaudgucciardi/Documents/GitHub/tfrabbit' ):
+    os.chdir('./code/tflite')
 
 saved_model1 = './model1_mnist/'
 saved_model2 = './model2_mnist/'
@@ -33,10 +37,10 @@ def load_data():
     train_images_norm = train_images.astype(np.float32) / 255.0
     test_images_norm = test_images.astype(np.float32) / 255.0
 
-    return train_images_norm, test_images_norm, test_labels
+    return train_images_norm, train_labels, test_images_norm, test_labels
 
 
-# tflite conv + inference 
+####  TFlite conv + inference 
 inf_time = []
 
 def representative_data_gen():
@@ -101,9 +105,9 @@ def run_inference(interpreter):
     return predictions
 
 
-train_imgs, test_imgs, test_labels = load_data()
+train_imgs, _, test_imgs, test_labels = load_data()
 
-# Normal TF
+#### Normal TF
 pred_time = 0
 start_pred = time.time()
 pred = reloaded_model.predict(test_imgs)
