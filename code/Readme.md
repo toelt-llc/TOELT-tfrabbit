@@ -46,8 +46,8 @@ Installing Tensorflow requires some extra steps on the Pi's ARM architecture, I 
 Picked TF 2.4.0 from [tensorflow-on-arm](https://github.com/lhelontra/tensorflow-on-arm/releases)  
 `$ wget https://github.com/lhelontra/tensorflow-on-arm/releases/download/v2.4.0/tensorflow-2.4.0-cp37-none-linux_armv7l.whl`  
 `$ python3 -m pip uninstall tensorflow`  
-`$ python3 -m pip install tensorflow-2.0.0-cp37-none-linux_armv7l.whl`  
+`$ python3 -m pip install tensorflow-2.4.0-cp37-none-linux_armv7l.whl`  
 
-To run on RaspberryPi, it was also necessary to change Numpy version to 1.20.0
-`$ python3 -m pip uninstall numpy`
-`$ python3 -m pip uninstall numpy==1.20.0`
+To run on RaspberryPi, it was also necessary to change Numpy version to 1.20.0 (the tensorflow installation uses 1.19.5)   
+`$ python3 -m pip uninstall numpy`  
+`$ python3 -m pip install numpy==1.20.0`  
