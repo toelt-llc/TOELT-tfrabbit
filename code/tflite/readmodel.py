@@ -5,12 +5,16 @@ import os
 
 from tensorflow import keras
 
+# Imports a saved .tflite model, and runs it on the given data
+# Requires a dataset 
+
 def interpret(model, test_set):
     #start_int = time.time()
     interpreter = tf.lite.Interpreter(model_content=model)
 
     interpreter.allocate_tensors()
     input_details = interpreter.get_input_details()
+    #print(input_details)
     input_type = interpreter.get_input_details()[0]['dtype']
     # Quantization parameters : 
     input_scale, input_zero_point = input_details[0]["quantization"]
@@ -53,6 +57,7 @@ def load_data():
     # Normalize the input image so that each pixel value is between 0 to 1.
     train_images_norm = train_images.astype(np.float32) / 255.0
     test_images_norm = test_images.astype(np.float32) / 255.0
+    test_images_norm = test_images_norm.astype(np.uint8)
 
     return train_images_norm, train_labels, test_images_norm, test_labels
 
@@ -63,3 +68,5 @@ interpreter = interpret(model, test_imgs)
 run_inference(interpreter)
 
 print('Inference time {}'.format(round(inf_time[0],2)))
+
+print(test_imgs.dtype)
