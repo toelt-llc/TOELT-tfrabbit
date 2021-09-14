@@ -7,9 +7,11 @@ from tensorflow import keras
 
 # Imports a saved .tflite model, and runs it on the given data
 # Requires a dataset 
+# ! Requires to be trained on the same data used here
 
+inf_time = []
 def interpret(model, test_set):
-    #start_int = time.time()
+    start_int = time.time()
     interpreter = tf.lite.Interpreter(model_content=model)
 
     interpreter.allocate_tensors()
@@ -31,10 +33,9 @@ def interpret(model, test_set):
     interpreter.set_tensor(input_details[0]['index'], test_images_q)
     end_int = time.time()
 
-    #inf_time.append(end_int-start_int)
+    inf_time.append(end_int-start_int)
     return interpreter
 
-inf_time = []
 def run_inference(interpreter):
     output_details = interpreter.get_output_details()
     start_inf = time.time()
@@ -57,6 +58,7 @@ def load_data():
     # Normalize the input image so that each pixel value is between 0 to 1.
     train_images_norm = train_images.astype(np.float32) / 255.0
     test_images_norm = test_images.astype(np.float32) / 255.0
+    # Keep in my mid the changes over the training set for the original model, ie you may loose accuracy
     test_images_norm = test_images_norm.astype(np.uint8)
 
     return train_images_norm, train_labels, test_images_norm, test_labels
@@ -66,7 +68,7 @@ model = open("converted_model.tflite", "rb").read()
 train_imgs, _, test_imgs, test_labels = load_data()
 interpreter = interpret(model, test_imgs)
 run_inference(interpreter)
-
-print('Inference time {}'.format(round(inf_time[0],2)))
+print('Interpret time {}'.format(round(inf_time[0],2)))
+print('Inference time {}'.format(round(inf_time[1],2)))
 
 print(test_imgs.dtype)
