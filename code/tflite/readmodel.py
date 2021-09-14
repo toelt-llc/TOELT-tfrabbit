@@ -59,16 +59,15 @@ def load_data():
     train_images_norm = train_images.astype(np.float32) / 255.0
     test_images_norm = test_images.astype(np.float32) / 255.0
     # Keep in my mid the changes over the training set for the original model, ie you may loose accuracy
-    test_images_norm = test_images_norm.astype(np.uint8)
+    #test_images_norm = test_images_norm.astype(np.uint8)
 
     return train_images_norm, train_labels, test_images_norm, test_labels
 
-model = open("converted_model.tflite", "rb").read()
+model = open("test.tflite", "rb").read()
 
 train_imgs, _, test_imgs, test_labels = load_data()
 interpreter = interpret(model, test_imgs)
 run_inference(interpreter)
 print('Interpret time {}'.format(round(inf_time[0],2)))
 print('Inference time {}'.format(round(inf_time[1],2)))
-
-print(test_imgs.dtype)
+#print(test_imgs.dtype)
