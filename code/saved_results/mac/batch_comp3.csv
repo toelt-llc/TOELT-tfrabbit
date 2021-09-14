@@ -1,0 +1,3 @@
+Neurons,Layers,Training time,Inference time,By image,Loss,Acc
+128,2,9.62,0.22,0.0,0.05,0.75
+256,2,11.13,0.21,0.0,0.04,0.76
