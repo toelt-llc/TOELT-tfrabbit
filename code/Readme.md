@@ -5,6 +5,7 @@
 - `saved_results`: it contains figures (animated and not) and then results for frodo, rpi, mac in separated folders. The results are in form of plots of CSV files.
 - `test`: this is a personal folder used for testing. Files contained here are not yet finalized.
 - `tflite`: this folder contains notebook that deal with the conversion and testing of TFLite.
+- `multiple_workers`: this folder contains notebook that tests the use of GPUs with multiple scripts.
 
 ### Files
 
