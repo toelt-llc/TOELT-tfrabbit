@@ -7,6 +7,7 @@
 - `frodo3.csv`: one run as described above using three GPUs.
 - `f_averages.csv`: this files contain the average of the 10 runs.
 - `batch2_<NUMBER>`: with NUMBER =1,2,3. Contains the results of 3 runs on frodo.  
-  Running setup : mnist_rpi6.py -n 5,10,50,128,256,512,1024,1500,2048,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000  
+  Running setup (1) : mnist_rpi6.py -n 5,10,50,128,256,512,1024,1500,2048,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000  
   -l 2,4,6,8 
 - `batch3_<NUMBER>`: with NUMBER =1,2,3. Fashion mnist results, with the same setup as batch2, to compare the results.
+- `batch4_<NUMNER>`: 10 complete runs on the mnist dataset, running setup is same as (1)
