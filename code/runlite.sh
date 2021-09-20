@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODEL=./tflite/test.tflite
+MODEL=./test.tflite
 #echo $MODEL
 if [ ! -f "$MODEL" ]; then
     echo "$MODEL does not exists. Attempting to train and convert the model : "
