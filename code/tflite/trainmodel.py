@@ -32,7 +32,7 @@ def trained_model():
                 metrics=['accuracy'])
     model.fit(train_images,train_labels,epochs=1,validation_data=(test_images, test_labels))
     
-    model.save('saved_model/my_model')
+    model.save('saved_model/my_model_CNN')
     # model = trained_model()
     return model
 
@@ -60,8 +60,35 @@ def conv_int8(model_path):
     end_conv = time.time()
     inf_time.append(end_conv-start_conv)
 
+    #tflite_model_8_file = "./tflite_moddels/mnist_model_quant_8.tflite"
+    #tflite_model_8_file.write_bytes(quant_model)
     return(quant_model)
 
+def conv_float16(model_path):
+    start_conv = time.time()
+    # TODO set option to read it from saved model or from existing model
+    # for now : uses keras (existing model)
+    # converter1 = tf.lite.TFLiteConverter.from_saved_model(model_path)
+    converter1 = tf.lite.TFLiteConverter.from_keras_model(model_path)
+    converter1.optimizations = [tf.lite.Optimize.DEFAULT]
+    converter1.target_spec.supported_types = [tf.float16]
+    # converter1.inference_input_type = tf.float16
+    # converter1.inference_output_type = tf.float16
+
+    quant_model = converter1.convert()
+    end_conv = time.time()
+    inf_time.append(end_conv-start_conv)
+
+    return(quant_model)
+
+def conv_noquant(model_path):
+    # conv to tflite format without quantization
+    start_conv = time.time()
+    converter1 = tf.lite.TFLiteConverter.from_keras_model(model_path)
+    quant_model = converter1.convert()
+    end_conv = time.time()
+    inf_time.append(end_conv-start_conv)
+    return(quant_model)
 
 def interpret(model, test_set):
     #start_int = time.time()
@@ -101,8 +128,6 @@ def run_inference(interpreter):
     return predictions
 
 model = trained_model()
-quanted_model = conv_int8(model)
-interpreter = interpret(quanted_model, test_images)
 
 _, eval = model.evaluate(test_images, test_labels)
 start = time.time()
@@ -113,10 +138,32 @@ inftime = end-start
 print("Classic TF test acc:", round(eval, 3))
 print("Classic TF inference time:", round(inftime, 3))
 
-predictions = run_inference(interpreter)
-print('Quantized model acc : ', (predictions == test_labels).mean())
-print('Conversion time : {}, Inference time {}'.format(round(inf_time[0],2), round(inf_time[1],2)))
 
-open("test.tflite", "wb").write(quanted_model)
+quanted_model8 = conv_int8(model)
+interpreter8 = interpret(quanted_model8, test_images)
+predictions8 = run_inference(interpreter8)
+predictions8_2 = run_inference(interpreter8)
+
+quanted_model16 = conv_float16(model)
+interpreter16 = interpret(quanted_model16, test_images)
+predictions16 = run_inference(interpreter16)
+
+quanted_model_raw = conv_noquant(model)
+interpreter_raw = interpret(quanted_model_raw, test_images)
+predictions_raw = run_inference(interpreter_raw)
+
+print(inf_time)
+print('Quantized 8 model acc : ', (predictions8 == test_labels).mean())
+print('Conversion time : {}, Inference time {}'.format(round(inf_time[0],2), round(inf_time[1],2)))
+print('2nd Inference time {}'.format(round(inf_time[2],2)))
+print('Quantized 16 model acc : ', (predictions8 == test_labels).mean())
+print('Conversion time : {}, Inference time {}'.format(round(inf_time[3],2), round(inf_time[4],2)))
+print('Not quantized converted model acc : ', (predictions_raw == test_labels).mean())
+print('Conversion time : {}, Inference time {}'.format(round(inf_time[5],2), round(inf_time[6],2)))
+
+open("./tflite_models/test_8.tflite", "wb").write(quanted_model8)
+open("./tflite_models/test_16.tflite", "wb").write(quanted_model16)
+open("./tflite_models/test_raw.tflite", "wb").write(quanted_model_raw)
+
 #tf.saved_model.save(model, './model3_mnist/')
 #model.save('./model3_keras/')
