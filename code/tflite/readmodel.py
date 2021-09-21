@@ -63,10 +63,24 @@ def load_data():
 
     return train_images_norm, train_labels, test_images_norm, test_labels
 
-model = open("test.tflite", "rb").read()
-
+# Data
 train_imgs, _, test_imgs, test_labels = load_data()
-interpreter = interpret(model, test_imgs)
+
+# TF Inference
+classic_model = tf.keras.models.load_model('./saved_model/my_model')
+_, eval = classic_model.evaluate(test_imgs, test_labels)
+start = time.time()
+preds = classic_model.predict(test_imgs)
+dec = np.argmax(preds, axis=1)
+end = time.time()
+inftime = end-start
+print("Classic TF test acc:", round(eval, 3))
+print("Classic TF inference time:", round(inftime, 3))
+
+# TF Lite Inference
+lite_model = open("test.tflite", "rb").read()
+
+interpreter = interpret(lite_model, test_imgs)
 run_inference(interpreter)
 print('Interpret time {}'.format(round(inf_time[0],2)))
 print('Inference time {}'.format(round(inf_time[1],2)))

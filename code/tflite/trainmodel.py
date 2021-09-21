@@ -32,7 +32,7 @@ def trained_model():
                 metrics=['accuracy'])
     model.fit(train_images,train_labels,epochs=1,validation_data=(test_images, test_labels))
     
-
+    model.save('saved_model/my_model')
     # model = trained_model()
     return model
 
