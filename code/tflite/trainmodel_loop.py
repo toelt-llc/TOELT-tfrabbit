@@ -67,9 +67,16 @@ def evaluate_model(tflite_file, model_type):
     print('%s model accuracy is %.4f%% (Number of test samples=%d)' % (
         model_type, accuracy, len(test_images)))
     print('Inference time is : ', end-start)
+    return end-start
 
 
 tflite_model = open('./tflite_models/FFNN_8.tflite', "rb").read()
 test_model(tflite_model, test_image_index, model_type="Quantized")
 
-evaluate_model(tflite_model, model_type="Float")
+inferences = []
+i = 0
+for i in range(10):
+    inferences.append(evaluate_model(tflite_model, model_type="Quantized"))
+    i +=1
+
+print(inferences)
