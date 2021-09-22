@@ -6,3 +6,9 @@
 
 `tflite_converter` is the main notebook, creates a TF model (saves it and reloads it) to then convert it to TFLite
 The TFLite invoker is then used with some mnist_data. So far the notebook succesfully translates and uses a TFLite interpreter.
+
+`train_model_CNN.py`: trains a convolutional NN, measures its inference time, then convert and run it as TFLite. Does flaot32, float16 and int8 quant. Saves TF model under './saved_model/my_model_CNN'. Saves TFLite models under './tflite_models'
+`train_model_FFNN.py` : similar, but with a different model.   
+Both these models use the mnist dataset. 
+
+`read_model.py`: To run after a train_model script. Imports a saved .tflite model, and runs it on the given data, requires to load a dataset due to how TFLite works. Requires to be trained on the same data used in train_model.
