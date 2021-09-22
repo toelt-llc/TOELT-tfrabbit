@@ -161,7 +161,7 @@ print('Conversion time : {}, Inference time {}'.format(round(inf_time[3],2), rou
 print('Not quantized converted model acc : ', (predictions_raw == test_labels).mean())
 print('Conversion time : {}, Inference time {}'.format(round(inf_time[5],2), round(inf_time[6],2)))
 
-open("./tflite_models/FNN_8.tflite", "wb").write(quanted_model8)
+open("./tflite_models/FFNN_8.tflite", "wb").write(quanted_model8)
 open("./tflite_models/FFNN_16.tflite", "wb").write(quanted_model16)
 open("./tflite_models/FFNN_raw.tflite", "wb").write(quanted_model_raw)
 

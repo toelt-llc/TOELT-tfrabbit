@@ -12,3 +12,5 @@ The TFLite invoker is then used with some mnist_data. So far the notebook succes
 Both these models use the mnist dataset. 
 
 `read_model.py`: To run after a train_model script. Imports a saved .tflite model, and runs it on the given data, requires to load a dataset due to how TFLite works. Requires to be trained on the same data used in train_model.
+
+`run_model_loop`: currently runs a tflite model, over a chosen loop size. runs the inference without changing the inout size, therefore gaining time
