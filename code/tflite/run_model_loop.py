@@ -1,3 +1,4 @@
+from numpy.lib.function_base import interp
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -12,6 +13,7 @@ mnist = tf.keras.datasets.mnist
 # Normalize the input image so that each pixel value is between 0 to 1.
 train_images = train_images.astype(np.float32) / 255.0
 test_images = test_images.astype(np.float32) / 255.0
+#print(train_images.dtype)
 
 def run_tflite_model(tflite_file, test_image_indices):
     global test_images
@@ -31,12 +33,14 @@ def run_tflite_model(tflite_file, test_image_indices):
             input_scale, input_zero_point = input_details["quantization"]
             test_image = test_image / input_scale + input_zero_point
 
-    test_image = np.expand_dims(test_image, axis=0).astype(input_details["dtype"])
-    interpreter.set_tensor(input_details["index"], test_image)
-    interpreter.invoke()
-    output = interpreter.get_tensor(output_details["index"])[0]
+        #test_image = test_image.astype(input_details['dtype'])
+        test_image = np.expand_dims(test_image, axis=0).astype(input_details["dtype"])
+        interpreter.set_tensor(input_details["index"], test_image)
+        interpreter.invoke()
 
-    predictions[i] = output.argmax()
+        #print(interpreter.get_tensor(output_details["index"]))
+        output = interpreter.get_tensor(output_details["index"])[0]
+        predictions[i] = output.argmax()
 
     return predictions
 
@@ -58,29 +62,10 @@ def evaluate_model(tflite_file, model_type):
 
 tflite_model = open('./tflite_models/CNN_8.tflite', "rb").read()
 
-inferences = []
+inferences = {'Times':[]}
 i = 0
-for i in range(10):
-    inferences.append(evaluate_model(tflite_model, model_type="Quantized"))
+for i in range(20):
+    inferences['Times'].append(evaluate_model(tflite_model, model_type="Quantized"))
     i +=1
 
 print(inferences)
-
-
-## Test Image
-
-# # Change this to test a different image
-# test_image_index = 1
-# ## Helper function to test the models on one image
-# def test_model(tflite_file, test_image_index, model_type):
-#   global test_labels
-
-#   predictions = run_tflite_model(tflite_file, [test_image_index])
-
-#   plt.imshow(test_images[test_image_index])
-#   template = model_type + " Model \n True:{true}, Predicted:{predict}"
-#   _ = plt.title(template.format(true= str(test_labels[test_image_index]), predict=str(predictions[0])))
-#   plt.grid(False)
-#   #plt.show()
-
-# test_model(tflite_model, test_image_index, model_type="Quantized")
