@@ -98,12 +98,27 @@ def convert_quant8(converter, model_name):
 
     return tflite_model_quant8
 
+def convert_quant16(converter, model_name):
+    # The model is now a bit smaller with quantized weights, but other variable data is still in float format.
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS]
+    converter.target_spec.supported_types = [tf.float16]
+    converter.inference_input_type = tf.float32
+    converter.inference_output_type = tf.float32
+    tflite_model_quant16 = converter.convert()
+    # Save the -default- quantized model:
+    tflite_model_quant16_file = tflite_models_dir/(model_name + '_mnist_model_quant16.tflite')
+    tflite_model_quant16_file.write_bytes(tflite_model_quant16)
+    print('Successfully saved ', tflite_model_quant16_file)
+
+    return tflite_model_quant16
+
 def disk_usage():
     print('tflite models sizes : ')
     for _,_,filenames in os.walk(tflite_models_dir):
         #print(filenames)
         for file in filenames:
-            print(file, ':', os.stat(os.path.join(tflite_models_dir,file)).st_size)
+            print(file, ':', os.stat(os.path.join(tflite_models_dir,file)).st_size/1000, 'kb')
 
 conv, name_cnn = CNN()
 converter_CNN = tf.lite.TFLiteConverter.from_keras_model(conv)
@@ -111,12 +126,14 @@ converter_CNN = tf.lite.TFLiteConverter.from_keras_model(conv)
 convert(converter_CNN, name_cnn)
 convert_quant(converter_CNN, name_cnn)
 convert_quant8(converter_CNN, name_cnn)
+convert_quant16(converter_CNN, name_cnn)
 
 forw, name_ffnn = FFNN()
-converter_FFNN = tf.lite.TFLiteConverter.from_keras_model(conv)
+converter_FFNN = tf.lite.TFLiteConverter.from_keras_model(forw)
 
 convert(converter_FFNN, name_ffnn)
 convert_quant(converter_FFNN, name_ffnn)
 convert_quant8(converter_FFNN, name_ffnn)
+convert_quant16(converter_FFNN, name_ffnn)
 
 disk_usage()

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 import time
+import sys
 import os 
 
 #TODO : main functions, args : loop size, model file
@@ -44,7 +45,7 @@ def run_tflite_model(tflite_file, test_image_indices):
 
     return predictions
 
-def evaluate_model(tflite_file, model_type):
+def evaluate_model(tflite_file):
     global test_images
     global test_labels
 
@@ -54,7 +55,7 @@ def evaluate_model(tflite_file, model_type):
     end = time.time()
     accuracy = (np.sum(test_labels== predictions) * 100) / len(test_images)
 
-    #print('%s model accuracy is %.4f%% (Number of test samples=%d)' % (model_type, accuracy, len(test_images)))
+    #print('Model accuracy is %.4f%% (Number of test samples=%d)' % (accuracy, len(test_images)))
     print('Inference time is : ', round(end-start,2))
     return round(end-start,2)
 
@@ -66,18 +67,23 @@ for dirname, _, filenames in os.walk('./mnist_tflite_models/'):
     for filename in filenames:
         tflite_models.append(os.path.join(dirname, filename))
 
-num_iter = 2
+print(sys.argv[1:])
+num_iter = int(sys.argv[1])
 inferences = []
+infdict = {}
 
 for model in tflite_models:
-    tflite_model = open(model, "rb").read()
     print('Model running is : ', model)
+    tflite_model = open(model, "rb").read()
+    infdict[model]=[]
     i = 0
     for i in range(num_iter):
-        inferences.append(evaluate_model(tflite_model, model_type="Quantized"))
+        #inferences.append(evaluate_model(tflite_model))
+        infdict[model].append(evaluate_model(tflite_model))
         i +=1
 
-print(inferences)
+#print(inferences)
+print(infdict)
 
 # tflite_model = open(tflite_model_file, "rb").read()
 
