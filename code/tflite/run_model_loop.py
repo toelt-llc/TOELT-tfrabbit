@@ -79,7 +79,6 @@ for model in tflite_models:
 
 infdf = pd.DataFrame.from_dict(inferences)
 print(infdf)
-infdf.to_csv('infdf.csv', index=False)
 
 ## Run classic TF part 
 cnn_model = tf.keras.models.load_model('./mnist_models/CNN_classic.h5')
@@ -92,7 +91,7 @@ for model in tf_models:
     i = 0
     for i in range(num_iter):
         start = time.time()
-        loss, acc = model.evaluate(test_images, test_labels, verbose=2)
+        loss, acc = model.evaluate(test_images, test_labels, verbose=False)
         end = time.time()
         classic_inferences[model._name].append(round(end-start,2))
         i +=1
@@ -100,6 +99,8 @@ for model in tf_models:
 classic_infdf = pd.DataFrame.from_dict(classic_inferences)
 print(classic_infdf)
 
+result = pd.concat([infdf, classic_infdf], axis=1)
+result.to_csv('RPI_inferences_loop_'+str(num_iter)+'.csv', index=False)
 
 # start = time.time()
 # loss, acc = cnn_model.evaluate(test_images, test_labels, verbose=2)
