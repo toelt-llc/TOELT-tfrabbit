@@ -62,7 +62,7 @@ def evaluate_model(tflite_file):
 tflite_models = []
 for dirname, _, filenames in os.walk('./mnist_tflite_models/'):
     for filename in sorted(filenames):
-        tflite_models.append(filename)
+        tflite_models.append(os.path.join(dirname, filename))
 
 num_iter = int(sys.argv[1])
 inferences = {}
