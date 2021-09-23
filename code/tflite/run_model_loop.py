@@ -3,14 +3,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
-import time 
+import time
+import os 
 
 #TODO : main functions, args : loop size, model file
 
 mnist = tf.keras.datasets.mnist
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
-# Normalize the input image so that each pixel value is between 0 to 1.
 train_images = train_images.astype(np.float32) / 255.0
 test_images = test_images.astype(np.float32) / 255.0
 #print(train_images.dtype)
@@ -58,13 +58,34 @@ def evaluate_model(tflite_file, model_type):
     print('Inference time is : ', round(end-start,2))
     return round(end-start,2)
 
+#tflite_model_file = './mnist_tflite_models/CNN_mnist_model_quant.tflite'
 
-tflite_model = open('./tflite_models/CNN_8.tflite', "rb").read()
 
-inferences = {'Times':[]}
-i = 0
-for i in range(20):
-    inferences['Times'].append(evaluate_model(tflite_model, model_type="Quantized"))
-    i +=1
+tflite_models = []
+for dirname, _, filenames in os.walk('./mnist_tflite_models/'):
+    for filename in filenames:
+        tflite_models.append(os.path.join(dirname, filename))
+
+num_iter = 2
+inferences = []
+
+for model in tflite_models:
+    tflite_model = open(model, "rb").read()
+    print('Model running is : ', model)
+    i = 0
+    for i in range(num_iter):
+        inferences.append(evaluate_model(tflite_model, model_type="Quantized"))
+        i +=1
 
 print(inferences)
+
+# tflite_model = open(tflite_model_file, "rb").read()
+
+# print('Model running is : ', tflite_model_file)
+# inferences = {'Times':[]}
+# i = 0
+# for i in range(20):
+#     inferences['Times'].append(evaluate_model(tflite_model, model_type="Quantized"))
+#     i +=1
+
+# print(inferences)
