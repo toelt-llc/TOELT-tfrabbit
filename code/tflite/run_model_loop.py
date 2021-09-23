@@ -1,4 +1,4 @@
-from numpy.lib.function_base import interp
+#!/usr/bin/env python3
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -54,10 +54,9 @@ def evaluate_model(tflite_file, model_type):
     end = time.time()
     accuracy = (np.sum(test_labels== predictions) * 100) / len(test_images)
 
-    print('%s model accuracy is %.4f%% (Number of test samples=%d)' % (
-        model_type, accuracy, len(test_images)))
-    print('Inference time is : ', end-start)
-    return end-start
+    #print('%s model accuracy is %.4f%% (Number of test samples=%d)' % (model_type, accuracy, len(test_images)))
+    print('Inference time is : ', round(end-start,2))
+    return round(end-start,2)
 
 
 tflite_model = open('./tflite_models/CNN_8.tflite', "rb").read()

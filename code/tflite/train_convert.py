@@ -1,8 +1,15 @@
+#!/usr/bin/env python3
 import tensorflow as tf
 import numpy as np
 import time 
 import pathlib
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
+tflite_models_dir = pathlib.Path("./mnist_tflite_models/")
+#tflite_models_dir.mkdir(exist_ok=True, parents=True)
+
+# Data part, may change in the future.
 mnist = tf.keras.datasets.mnist
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
@@ -10,7 +17,7 @@ train_images = train_images.astype(np.float32) / 255.0
 test_images = test_images.astype(np.float32) / 255.0
 
 # CNN
-def trained_model():
+def trained_model_CNN():
     model = tf.keras.Sequential([
     tf.keras.layers.InputLayer(input_shape=(28, 28)),
     tf.keras.layers.Reshape(target_shape=(28, 28, 1)),
@@ -29,31 +36,64 @@ def trained_model():
     
     return model
 
+def trained_model_FFNN():
+    pass
+    return 
+
 def representative_data_gen():
+    """ Necessary for the quant8 part
+    """
     for input_value in tf.data.Dataset.from_tensor_slices(train_images).batch(1).take(100):
         yield [input_value]
 
-converter = tf.lite.TFLiteConverter.from_keras_model(trained_model())
-# Converts to a TensorFlow Lite model, but it's still using 32-bit float values for all parameter data.
-tflite_model = converter.convert()
+def convert(converter):
+    # Converts to a TensorFlow Lite model, but it's still using 32-bit float values for all parameter data.
+    tflite_model = converter.convert()
+    # Save
+    tflite_model_file = tflite_models_dir/"mnist_model.tflite"
+    tflite_model_file.write_bytes(tflite_model)
+    print('Successfully saved ', tflite_model_file )
 
-# The model is now a bit smaller with quantized weights, but other variable data is still in float format.
-converter.optimizations = [tf.lite.Optimize.DEFAULT]
-tflite_model_quant = converter.convert()
+    return tflite_model
 
-# Convert using integer-only quantization
-converter.optimizations = [tf.lite.Optimize.DEFAULT]
-converter.representative_dataset = representative_data_gen
-converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-converter.inference_input_type = tf.uint8
-converter.inference_output_type = tf.uint8
-tflite_model_quant8 = converter.convert()
+def convert_quant(converter):
+    # The model is now a bit smaller with quantized weights, but other variable data is still in float format.
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    tflite_model_quant = converter.convert()
+    # Save the -default- quantized model:
+    tflite_model_quant_file = tflite_models_dir/"mnist_model_quant.tflite"
+    tflite_model_quant_file.write_bytes(tflite_model_quant)
+    print('Successfully saved ', tflite_model_quant_file)
 
-tflite_models_dir = pathlib.Path("./mnist_tflite_models/")
-tflite_models_dir.mkdir(exist_ok=True, parents=True)
-# Save the unquantized/float model:
-tflite_model_file = tflite_models_dir/"mnist_model.tflite"
-tflite_model_file.write_bytes(tflite_model)
-# Save the quantized model:
-tflite_model_quant_file = tflite_models_dir/"mnist_model_quant8.tflite"
-tflite_model_quant_file.write_bytes(tflite_model_quant8)
+    return tflite_model_quant
+
+def convert_quant8(converter):
+    # Convert using integer-only quantization
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    converter.representative_dataset = representative_data_gen
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8, tf.lite.OpsSet.TFLITE_BUILTINS]
+    converter.inference_input_type = tf.uint8
+    converter.inference_output_type = tf.uint8
+    tflite_model_quant8 = converter.convert()
+    # Save the integer quantized model:
+    tflite_model_quant8_file = tflite_models_dir/"mnist_model_quant8.tflite"
+    tflite_model_quant8_file.write_bytes(tflite_model_quant8)
+    print('Successfully saved ', tflite_model_quant8_file )
+
+    return tflite_model_quant8
+
+def disk_usage():
+    print('tflite models sizes : ')
+    for _,_,filenames in os.walk(tflite_models_dir):
+        print(filenames)
+        for file in filenames:
+            print(file, ':', os.stat(os.path.join(tflite_models_dir,file)).st_size)
+
+
+converter_CNN = tf.lite.TFLiteConverter.from_keras_model(trained_model_CNN())
+
+
+convert(converter_CNN)
+convert_quant(converter_CNN)
+convert_quant8(converter_CNN)
+disk_usage()
