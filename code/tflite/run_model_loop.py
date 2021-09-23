@@ -61,8 +61,8 @@ def evaluate_model(tflite_file):
 
 tflite_models = []
 for dirname, _, filenames in os.walk('./mnist_tflite_models/'):
-    for filename in filenames:
-        tflite_models.append(os.path.join(dirname, filename))
+    for filename in sorted(filenames):
+        tflite_models.append(filename)
 
 num_iter = int(sys.argv[1])
 inferences = {}
@@ -79,34 +79,44 @@ for model in tflite_models:
 
 infdf = pd.DataFrame.from_dict(inferences)
 print(infdf)
+infdf.to_csv('infdf.csv', index=False)
 
 ## Run classic TF part 
 cnn_model = tf.keras.models.load_model('./mnist_models/CNN_classic.h5')
 ffnn_model = tf.keras.models.load_model('./mnist_models/FFNN_classic.h5')
 
 tf_models = [cnn_model, ffnn_model]
+classic_inferences = {} #{'cnn':[],'ffnn':[]}
 for model in tf_models:
-
-    pass
-classic_inferences = {}
-
-
-start = time.time()
-loss, acc = cnn_model.evaluate(test_images, test_labels, verbose=2)
-end = time.time()
-print('Restored cnn model, accuracy: {:5.2f}%'.format(100 * acc))
-print('Inference time : ', round(end-start,2))
-classic_inferences['cnn'] = [round(end-start,2)]
-
-start = time.time()
-loss, acc = ffnn_model.evaluate(test_images, test_labels, verbose=2)
-end = time.time()
-print('Restored ffnn model, accuracy: {:5.2f}%'.format(100 * acc))
-print('Inference time : ', round(end-start,2))
-classic_inferences['ffnn'] = [round(end-start,2)]
+    classic_inferences[model._name] = []
+    i = 0
+    for i in range(num_iter):
+        start = time.time()
+        loss, acc = model.evaluate(test_images, test_labels, verbose=2)
+        end = time.time()
+        classic_inferences[model._name].append(round(end-start,2))
+        i +=1
 
 classic_infdf = pd.DataFrame.from_dict(classic_inferences)
 print(classic_infdf)
+
+
+# start = time.time()
+# loss, acc = cnn_model.evaluate(test_images, test_labels, verbose=2)
+# end = time.time()
+# print('Restored cnn model, accuracy: {:5.2f}%'.format(100 * acc))
+# print('Inference time : ', round(end-start,2))
+# classic_inferences['cnn'] = [round(end-start,2)]
+
+# start = time.time()
+# loss, acc = ffnn_model.evaluate(test_images, test_labels, verbose=2)
+# end = time.time()
+# print('Restored ffnn model, accuracy: {:5.2f}%'.format(100 * acc))
+# print('Inference time : ', round(end-start,2))
+# classic_inferences['ffnn'] = [round(end-start,2)]
+
+# classic_infdf = pd.DataFrame.from_dict(classic_inferences)
+# print(classic_infdf)
 
 # z = {**infdf, **classic_infdf}
 # print(z)

@@ -43,7 +43,7 @@ def CNN():
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(classes)
     ])
-
+    model._name = 'cnn'
     # Train the digit classification model
     model.compile(optimizer='adam',
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(
@@ -65,6 +65,7 @@ def FFNN():
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(classes)
     ])
+    model._name = 'ffnn'
 
     model.compile(optimizer='adam',
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(
@@ -136,7 +137,7 @@ def disk_usage(dir):
     print('tflite models sizes : ')
     for _,_,filenames in os.walk(dir):
         #print(filenames)
-        for file in filenames:
+        for file in sorted(filenames):
             print(file, ':', os.stat(os.path.join(dir,file)).st_size/1000, 'kb')
 
 conv, name_cnn = CNN()
