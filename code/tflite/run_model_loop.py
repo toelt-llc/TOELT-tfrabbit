@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-import pandas as pd
-import matplotlib.pyplot as plt
 import tensorflow as tf
+import pandas as pd
 import numpy as np
 import time
 import sys
@@ -9,12 +8,20 @@ import os
 
 #TODO : main function
 
-mnist = tf.keras.datasets.mnist
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+def dataset(set):
+    if set == 'mnist':
+        mnist = tf.keras.datasets.mnist
+        _, (test_images, test_labels) = mnist.load_data()
+        test_images = test_images.astype(np.float32) / 255.0
+    elif set == 'cifar100':
+        cifar = tf.keras.datasets.cifar100
+        _, (test_images, test_labels) = cifar.load_data()
+        test_images = test_images.astype(np.float32) / 255.0
+    
+    return test_images, test_labels
 
-train_images = train_images.astype(np.float32) / 255.0
-test_images = test_images.astype(np.float32) / 255.0
-#print(train_images.dtype)
+
+test_images, test_labels = dataset(sys.argv[1])
 
 def run_tflite_model(tflite_file, test_image_indices):
     global test_images
@@ -59,24 +66,24 @@ def evaluate_model(tflite_file):
     print('Inference time is : ', round(end-start,2))
     return round(end-start,2)
 
+
 tflite_models = []
 for dirname, _, filenames in os.walk('./mnist_tflite_models/'):
     for filename in filenames:
         tflite_models.append(os.path.join(dirname, filename))
 
-num_iter = int(sys.argv[1])
+num_iter = int(sys.argv[2])
 inferences = {}
-infdict = {}
 
 for model in tflite_models:
     print('Model running is : ', model)
     tflite_model = open(model, "rb").read()
-    infdict[model]=[]
+    inferences[model]=[]
     i = 0
     for i in range(num_iter):
         #inferences.append(evaluate_model(tflite_model))
-        infdict[model].append(evaluate_model(tflite_model))
+        inferences[model].append(evaluate_model(tflite_model))
         i +=1
 
-#print(inferences)
-print(infdict)
+infdf = pd.DataFrame.from_dict(inferences)
+print(infdf)

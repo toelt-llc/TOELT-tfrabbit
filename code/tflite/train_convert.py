@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 import time 
 import pathlib
+import sys
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
@@ -10,21 +11,37 @@ tflite_models_dir = pathlib.Path("./mnist_tflite_models/")
 #tflite_models_dir.mkdir(exist_ok=True, parents=True)
 
 # Data part, may change in the future.
-mnist = tf.keras.datasets.mnist
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+def dataset(set):
+    global classes
+    if set == 'mnist':
+        mnist = tf.keras.datasets.mnist
+        (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+        train_images = train_images.astype(np.float32) / 255.0
+        test_images = test_images.astype(np.float32) / 255.0
+        classes = 10
+    elif set == 'cifar100':
+        cifar = tf.keras.datasets.cifar100
+        (train_images, train_labels), (test_images, test_labels) = cifar.load_data()
+        train_images = train_images.astype(np.float32) / 255.0
+        test_images = test_images.astype(np.float32) / 255.0
+        classes = 100
+    
+    return train_images, train_labels, test_images, test_labels
 
-train_images = train_images.astype(np.float32) / 255.0
-test_images = test_images.astype(np.float32) / 255.0
+
+train_images, train_labels, test_images, test_labels = dataset(sys.argv[1])
 
 # CNN
 def CNN():
+    #global classes
+    #w,l,d = images.shape[1], images.shape[2], images.shape[3] #28,28 or 32,32
     model = tf.keras.Sequential([
-    tf.keras.layers.InputLayer(input_shape=(28, 28)),
-    tf.keras.layers.Reshape(target_shape=(28, 28, 1)),
+    tf.keras.layers.InputLayer(input_shape=(28,28)),
+    tf.keras.layers.Reshape(target_shape=(28,28,1)),
     tf.keras.layers.Conv2D(filters=12, kernel_size=(3, 3), activation='relu'),
     tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
     tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(10)
+    tf.keras.layers.Dense(classes)
     ])
 
     # Train the digit classification model
@@ -37,13 +54,15 @@ def CNN():
     return model, CNN.__name__
 
 def FFNN():
+    #global classes
+    #w,l = images.shape[1], images.shape[2]
     model = tf.keras.Sequential([
     tf.keras.layers.InputLayer(input_shape=(28, 28)),
-    tf.keras.layers.Reshape(target_shape=(28, 28, 1)),
+    tf.keras.layers.Reshape(target_shape=(28,28, 1)),
     tf.keras.layers.Dense(40),
     tf.keras.layers.Dense(80),
     tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(10)
+    tf.keras.layers.Dense(classes)
     ])
 
     model.compile(optimizer='adam',
