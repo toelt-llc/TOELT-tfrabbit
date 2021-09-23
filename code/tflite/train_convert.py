@@ -40,8 +40,8 @@ def FFNN():
     model = tf.keras.Sequential([
     tf.keras.layers.InputLayer(input_shape=(28, 28)),
     tf.keras.layers.Reshape(target_shape=(28, 28, 1)),
-    tf.keras.layers.Dense(320),
-    tf.keras.layers.Dense(160),
+    tf.keras.layers.Dense(40),
+    tf.keras.layers.Dense(80),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(10)
     ])
@@ -50,7 +50,7 @@ def FFNN():
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(
                     from_logits=True),
                 metrics=['accuracy'])
-    model.fit(train_images,train_labels,epochs=1,validation_data=(test_images, test_labels))
+    model.fit(train_images,train_labels,epochs=3,validation_data=(test_images, test_labels))
     
     # maybe use it for later
     #model.save('saved_model/my_model_FFNN')
@@ -113,12 +113,12 @@ def convert_quant16(converter, model_name):
 
     return tflite_model_quant16
 
-def disk_usage():
+def disk_usage(dir):
     print('tflite models sizes : ')
-    for _,_,filenames in os.walk(tflite_models_dir):
+    for _,_,filenames in os.walk(dir):
         #print(filenames)
         for file in filenames:
-            print(file, ':', os.stat(os.path.join(tflite_models_dir,file)).st_size/1000, 'kb')
+            print(file, ':', os.stat(os.path.join(dir,file)).st_size/1000, 'kb')
 
 conv, name_cnn = CNN()
 converter_CNN = tf.lite.TFLiteConverter.from_keras_model(conv)
@@ -128,6 +128,7 @@ convert_quant(converter_CNN, name_cnn)
 convert_quant8(converter_CNN, name_cnn)
 convert_quant16(converter_CNN, name_cnn)
 
+
 forw, name_ffnn = FFNN()
 converter_FFNN = tf.lite.TFLiteConverter.from_keras_model(forw)
 
@@ -136,4 +137,4 @@ convert_quant(converter_FFNN, name_ffnn)
 convert_quant8(converter_FFNN, name_ffnn)
 convert_quant16(converter_FFNN, name_ffnn)
 
-disk_usage()
+disk_usage(tflite_models_dir)

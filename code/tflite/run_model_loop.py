@@ -7,7 +7,7 @@ import time
 import sys
 import os 
 
-#TODO : main functions, args : loop size, model file
+#TODO : main function
 
 mnist = tf.keras.datasets.mnist
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
@@ -59,17 +59,13 @@ def evaluate_model(tflite_file):
     print('Inference time is : ', round(end-start,2))
     return round(end-start,2)
 
-#tflite_model_file = './mnist_tflite_models/CNN_mnist_model_quant.tflite'
-
-
 tflite_models = []
 for dirname, _, filenames in os.walk('./mnist_tflite_models/'):
     for filename in filenames:
         tflite_models.append(os.path.join(dirname, filename))
 
-print(sys.argv[1:])
 num_iter = int(sys.argv[1])
-inferences = []
+inferences = {}
 infdict = {}
 
 for model in tflite_models:
@@ -84,14 +80,3 @@ for model in tflite_models:
 
 #print(inferences)
 print(infdict)
-
-# tflite_model = open(tflite_model_file, "rb").read()
-
-# print('Model running is : ', tflite_model_file)
-# inferences = {'Times':[]}
-# i = 0
-# for i in range(20):
-#     inferences['Times'].append(evaluate_model(tflite_model, model_type="Quantized"))
-#     i +=1
-
-# print(inferences)
