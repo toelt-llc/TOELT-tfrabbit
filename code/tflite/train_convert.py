@@ -50,8 +50,8 @@ def CNN():
                     from_logits=True),
                 metrics=['accuracy'])
     model.fit(train_images,train_labels,epochs=5, validation_data=(test_images, test_labels))
-    model.save('./mnist_models/CNN_classic')
-    
+    model.save('./mnist_models/CNN_classic.h5')
+
     return model, CNN.__name__
 
 def FFNN():
@@ -71,7 +71,7 @@ def FFNN():
                     from_logits=True),
                 metrics=['accuracy'])
     model.fit(train_images,train_labels,epochs=3,validation_data=(test_images, test_labels))
-    model.save('./mnist_models/FFNN_classic')
+    model.save('./mnist_models/FFNN_classic.h5')
 
     return model, FFNN.__name__
 

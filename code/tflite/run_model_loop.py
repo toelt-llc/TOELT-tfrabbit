@@ -5,6 +5,7 @@ import numpy as np
 import time
 import sys
 import os 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 #TODO : main function
 
@@ -80,19 +81,32 @@ infdf = pd.DataFrame.from_dict(inferences)
 print(infdf)
 
 ## Run classic TF part 
+cnn_model = tf.keras.models.load_model('./mnist_models/CNN_classic.h5')
+ffnn_model = tf.keras.models.load_model('./mnist_models/FFNN_classic.h5')
+
+tf_models = [cnn_model, ffnn_model]
+for model in tf_models:
+
+    pass
 classic_inferences = {}
 
-cnn_model = tf.keras.models.load_model('./mnist_models/CNN_classic')
-ffnn_model = tf.keras.models.load_model('./mnist_models/FFNN_classic')
 
 start = time.time()
 loss, acc = cnn_model.evaluate(test_images, test_labels, verbose=2)
 end = time.time()
 print('Restored cnn model, accuracy: {:5.2f}%'.format(100 * acc))
 print('Inference time : ', round(end-start,2))
+classic_inferences['cnn'] = [round(end-start,2)]
 
 start = time.time()
 loss, acc = ffnn_model.evaluate(test_images, test_labels, verbose=2)
 end = time.time()
 print('Restored ffnn model, accuracy: {:5.2f}%'.format(100 * acc))
 print('Inference time : ', round(end-start,2))
+classic_inferences['ffnn'] = [round(end-start,2)]
+
+classic_infdf = pd.DataFrame.from_dict(classic_inferences)
+print(classic_infdf)
+
+# z = {**infdf, **classic_infdf}
+# print(z)
