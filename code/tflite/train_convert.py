@@ -60,7 +60,7 @@ def FFNN():
     tf.keras.layers.InputLayer(input_shape=(28, 28)),
     tf.keras.layers.Reshape(target_shape=(28,28, 1)),
     tf.keras.layers.Dense(40),
-    tf.keras.layers.Dense(80),
+    #tf.keras.layers.Dense(40),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(classes)
     ])
