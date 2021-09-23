@@ -8,20 +8,11 @@ import os
 
 #TODO : main function
 
-def dataset(set):
-    if set == 'mnist':
-        mnist = tf.keras.datasets.mnist
-        _, (test_images, test_labels) = mnist.load_data()
-        test_images = test_images.astype(np.float32) / 255.0
-    elif set == 'cifar100':
-        cifar = tf.keras.datasets.cifar100
-        _, (test_images, test_labels) = cifar.load_data()
-        test_images = test_images.astype(np.float32) / 255.0
-    
-    return test_images, test_labels
+mnist = tf.keras.datasets.mnist
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
-
-test_images, test_labels = dataset(sys.argv[1])
+train_images = train_images.astype(np.float32) / 255.0
+test_images = test_images.astype(np.float32) / 255.0
 
 def run_tflite_model(tflite_file, test_image_indices):
     global test_images
@@ -72,7 +63,7 @@ for dirname, _, filenames in os.walk('./mnist_tflite_models/'):
     for filename in filenames:
         tflite_models.append(os.path.join(dirname, filename))
 
-num_iter = int(sys.argv[2])
+num_iter = int(sys.argv[1])
 inferences = {}
 
 for model in tflite_models:
@@ -87,3 +78,21 @@ for model in tflite_models:
 
 infdf = pd.DataFrame.from_dict(inferences)
 print(infdf)
+
+## Run classic TF part 
+classic_inferences = {}
+
+cnn_model = tf.keras.models.load_model('./mnist_models/CNN_classic')
+ffnn_model = tf.keras.models.load_model('./mnist_models/FFNN_classic')
+
+start = time.time()
+loss, acc = cnn_model.evaluate(test_images, test_labels, verbose=2)
+end = time.time()
+print('Restored cnn model, accuracy: {:5.2f}%'.format(100 * acc))
+print('Inference time : ', round(end-start,2))
+
+start = time.time()
+loss, acc = ffnn_model.evaluate(test_images, test_labels, verbose=2)
+end = time.time()
+print('Restored ffnn model, accuracy: {:5.2f}%'.format(100 * acc))
+print('Inference time : ', round(end-start,2))

@@ -50,6 +50,7 @@ def CNN():
                     from_logits=True),
                 metrics=['accuracy'])
     model.fit(train_images,train_labels,epochs=5, validation_data=(test_images, test_labels))
+    model.save('./mnist_models/CNN_classic')
     
     return model, CNN.__name__
 
@@ -70,9 +71,8 @@ def FFNN():
                     from_logits=True),
                 metrics=['accuracy'])
     model.fit(train_images,train_labels,epochs=3,validation_data=(test_images, test_labels))
-    
-    # maybe use it for later
-    #model.save('saved_model/my_model_FFNN')
+    model.save('./mnist_models/FFNN_classic')
+
     return model, FFNN.__name__
 
 def representative_data_gen():
