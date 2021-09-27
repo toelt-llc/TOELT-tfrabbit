@@ -65,7 +65,7 @@ def evaluate_model(tflite_file):
 
     #print('Model accuracy is %.4f%% (Number of test samples=%d)' % (accuracy, len(test_images)))
     print('Inference time is : ', round(end-start,2))
-    print('Invoke time is :', invokes_times)
+    #print('Invoke time is :', invokes_times)
     return round(end-start,2)
 
 def disk_usage(dir):
