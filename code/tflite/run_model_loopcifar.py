@@ -124,8 +124,8 @@ name = sys.argv[2]
 result = pd.concat([infdf, classic_infdf], axis=1)
 result.to_csv('RPI_inferences_loop_'+str(num_iter)+name+'.csv', index=False)
 
-litemodels_size = list(disk_usage(tflite_models_dir).values())
-models_size = list(disk_usage(cifar_models_dir).values())
-sizes_list = litemodels_size + models_size
-with open('disk_'+name+'.pkl', 'wb') as f:
-    pickle.dump(sizes_list, f)
+# litemodels_size = list(disk_usage(tflite_models_dir).values())
+# models_size = list(disk_usage(cifar_models_dir).values())
+# sizes_list = litemodels_size + models_size
+# with open('disk_'+name+'.pkl', 'wb') as f:
+#     pickle.dump(sizes_list, f)
