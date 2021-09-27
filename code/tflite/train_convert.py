@@ -8,6 +8,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 tflite_models_dir = pathlib.Path("./mnist_tflite_models/")
+mnist_models_dir = pathlib.Path('./mnist_models')
 #tflite_models_dir.mkdir(exist_ok=True, parents=True)
 
 # Data part, may change in the future.
@@ -29,7 +30,7 @@ def dataset(set):
     return train_images, train_labels, test_images, test_labels
 
 
-train_images, train_labels, test_images, test_labels = dataset(sys.argv[1])
+train_images, train_labels, test_images, test_labels = dataset('mnist')#sys.argv[1])
 
 # CNN
 def CNN():
@@ -50,6 +51,7 @@ def CNN():
                     from_logits=True),
                 metrics=['accuracy'])
     model.fit(train_images,train_labels,epochs=5, validation_data=(test_images, test_labels))
+    print('Saved model :  ./mnist_models/CNN_classic.h5')
     model.save('./mnist_models/CNN_classic.h5')
 
     return model, CNN.__name__
@@ -72,6 +74,7 @@ def FFNN():
                     from_logits=True),
                 metrics=['accuracy'])
     model.fit(train_images,train_labels,epochs=3,validation_data=(test_images, test_labels))
+    print('Saved model :  ./mnist_models/FFNN_classic.h5')
     model.save('./mnist_models/FFNN_classic.h5')
 
     return model, FFNN.__name__
@@ -134,7 +137,7 @@ def convert_quant16(converter, model_name):
     return tflite_model_quant16
 
 def disk_usage(dir):
-    print('tflite models sizes : ')
+    print('Models sizes : ')
     for _,_,filenames in os.walk(dir):
         #print(filenames)
         for file in sorted(filenames):
@@ -158,3 +161,4 @@ convert_quant8(converter_FFNN, name_ffnn)
 convert_quant16(converter_FFNN, name_ffnn)
 
 disk_usage(tflite_models_dir)
+disk_usage(mnist_models_dir)
