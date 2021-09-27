@@ -1,0 +1,4 @@
+./cifar10_tflite_models/CNN_cifar10_model.tflite,./cifar10_tflite_models/CNN_cifar10_model_quant.tflite,./cifar10_tflite_models/CNN_cifar10_model_quant16.tflite,./cifar10_tflite_models/CNN_cifar10_model_quant8.tflite,./cifar10_tflite_models/FFNN_cifar10_model.tflite,./cifar10_tflite_models/FFNN_cifar10_model_quant.tflite,./cifar10_tflite_models/FFNN_cifar10_model_quant16.tflite,./cifar10_tflite_models/FFNN_cifar10_model_quant8.tflite,cnn,ffnn
+1.21,1.24,1.77,10.58,10.3,3.57,9.68,22.34,1.02,2.02
+1.24,1.24,1.46,10.07,9.89,3.18,10.55,24.19,0.87,2.01
+1.47,1.39,1.53,10.87,9.39,3.02,9.24,23.34,0.94,2.14
