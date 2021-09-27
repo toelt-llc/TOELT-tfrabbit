@@ -2,12 +2,17 @@
 import tensorflow as tf
 import pandas as pd
 import numpy as np
+import pathlib
+import pickle
 import time
 import sys
 import os 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 #TODO : main function
+
+tflite_models_dir = pathlib.Path("./mnist_tflite_models/")
+mnist_models_dir = pathlib.Path('./mnist_models')
 
 mnist = tf.keras.datasets.mnist
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
@@ -58,7 +63,18 @@ def evaluate_model(tflite_file):
     print('Inference time is : ', round(end-start,2))
     return round(end-start,2)
 
+def disk_usage(dir):
+    sizes_kb = {}
+    print('Models sizes : ')
+    for _,_,filenames in os.walk(dir):
+        #print(filenames)
+        for file in sorted(filenames):
+            print(file, ':', os.stat(os.path.join(dir,file)).st_size/1000, 'kb')
+            sizes_kb[file] = os.stat(os.path.join(dir,file)).st_size/1000
+    return sizes_kb
 
+
+## Run TFLite 
 tflite_models = []
 for dirname, _, filenames in os.walk('./mnist_tflite_models/'):
     for filename in sorted(filenames):
@@ -99,25 +115,12 @@ for model in tf_models:
 classic_infdf = pd.DataFrame.from_dict(classic_inferences)
 print(classic_infdf)
 
+name = sys.argv[2]
 result = pd.concat([infdf, classic_infdf], axis=1)
-result.to_csv('RPI_inferences_loop_'+str(num_iter)+'.csv', index=False)
+result.to_csv('RPI_inferences_loop_'+str(num_iter)+name+'.csv', index=False)
 
-# start = time.time()
-# loss, acc = cnn_model.evaluate(test_images, test_labels, verbose=2)
-# end = time.time()
-# print('Restored cnn model, accuracy: {:5.2f}%'.format(100 * acc))
-# print('Inference time : ', round(end-start,2))
-# classic_inferences['cnn'] = [round(end-start,2)]
-
-# start = time.time()
-# loss, acc = ffnn_model.evaluate(test_images, test_labels, verbose=2)
-# end = time.time()
-# print('Restored ffnn model, accuracy: {:5.2f}%'.format(100 * acc))
-# print('Inference time : ', round(end-start,2))
-# classic_inferences['ffnn'] = [round(end-start,2)]
-
-# classic_infdf = pd.DataFrame.from_dict(classic_inferences)
-# print(classic_infdf)
-
-# z = {**infdf, **classic_infdf}
-# print(z)
+litemodels_size = list(disk_usage(tflite_models_dir).values())
+models_size = list(disk_usage(mnist_models_dir).values())
+sizes_list = litemodels_size + models_size
+with open('disk_'+name+'.pkl', 'wb') as f:
+    pickle.dump(sizes_list, f)
