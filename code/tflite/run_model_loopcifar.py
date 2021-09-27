@@ -30,6 +30,7 @@ def run_tflite_model(tflite_file, test_image_indices):
     output_details = interpreter.get_output_details()[0]
 
     predictions = np.zeros((len(test_image_indices),), dtype=int)
+    inv_times = []
     for i, test_image_index in enumerate(test_image_indices):
         test_image = test_images[test_image_index]
 
@@ -40,13 +41,17 @@ def run_tflite_model(tflite_file, test_image_indices):
         #test_image = test_image.astype(input_details['dtype'])
         test_image = np.expand_dims(test_image, axis=0).astype(input_details["dtype"])
         interpreter.set_tensor(input_details["index"], test_image)
+        start = time.time()
         interpreter.invoke()
+        end = time.time()
+        inv_times.append(end-start)
 
         #print(interpreter.get_tensor(output_details["index"]))
         output = interpreter.get_tensor(output_details["index"])[0]
         predictions[i] = output.argmax()
-
-    return predictions
+    inv_time = sum(inv_times)/len(inv_times)
+    #print('whole invoke :', sum(inv_times))
+    return predictions, inv_time
 
 def evaluate_model(tflite_file):
     global test_images
@@ -54,12 +59,13 @@ def evaluate_model(tflite_file):
 
     test_image_indices = range(test_images.shape[0])
     start = time.time()
-    predictions = run_tflite_model(tflite_file, test_image_indices)
+    predictions, invokes_times = run_tflite_model(tflite_file, test_image_indices)
     end = time.time()
     accuracy = (np.sum(test_labels== predictions) * 100) / len(test_images)
 
     #print('Model accuracy is %.4f%% (Number of test samples=%d)' % (accuracy, len(test_images)))
     print('Inference time is : ', round(end-start,2))
+    print('Invoke time is :', invokes_times)
     return round(end-start,2)
 
 def disk_usage(dir):
