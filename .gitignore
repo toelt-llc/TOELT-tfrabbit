@@ -6,3 +6,4 @@ code/dic.py
 
 data/
 img/
+code/tflite/__pycache__/stl10_load.cpython-38.pyc
