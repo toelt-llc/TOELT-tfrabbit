@@ -29,9 +29,9 @@ train_images = train_images.astype(np.float32) / 255.0
 test_images = test_images.astype(np.float32) / 255.0
 train_labels -= 1
 test_labels -= 1
-## reducing test_set by half : 
-test_images = test_images[:4000]
-test_labels = test_labels[:4000]
+## NOT reducing test_set by half for the run loops : 
+# test_images = test_images[:4000]
+# test_labels = test_labels[:4000]
 
 def run_tflite_model(tflite_file, test_image_indices):
     global test_images
