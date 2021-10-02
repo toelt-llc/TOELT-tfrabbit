@@ -3,3 +3,6 @@ code/tflite/mnist_data/test.csv
 code/tflite/mnist_data/train.csv
 code/tflite/bench_model/variables/variables.index
 code/dic.py
+
+data/
+img/
