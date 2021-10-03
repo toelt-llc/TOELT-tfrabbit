@@ -5,5 +5,9 @@ code/tflite/bench_model/variables/variables.index
 code/dic.py
 
 data/
-img/
 code/tflite/__pycache__/stl10_load.cpython-38.pyc
+data/stl10_binary.tar.gz
+data/img/
+data/stl10_binary/*.txt
+data/stl10_binary/train*
+data/stl10_binary/unlabeled_X.bin

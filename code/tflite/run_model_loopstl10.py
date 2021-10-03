@@ -16,18 +16,18 @@ stl10_models_dir = pathlib.Path('./stl10_models') #Not used
 
 ## adapted to stl10
 from stl10_load import read_all_images, read_labels
-TRAIN_PATH = '../../data/stl10_binary/train_X.bin'
-TRAIN_LABEL_PATH = '../../data/stl10_binary/train_y.bin'
+#TRAIN_PATH = '../../data/stl10_binary/train_X.bin'
+#TRAIN_LABEL_PATH = '../../data/stl10_binary/train_y.bin'
 TEST_PATH = '../../data/stl10_binary/test_X.bin'
 TEST_LABEL_PATH = '../../data/stl10_binary/test_y.bin'
 
-train_images = read_all_images(TRAIN_PATH)
-train_labels = read_labels(TRAIN_LABEL_PATH)
+#train_images = read_all_images(TRAIN_PATH)
+#train_labels = read_labels(TRAIN_LABEL_PATH)
 test_images = read_all_images(TEST_PATH)
 test_labels = read_labels(TEST_LABEL_PATH)
-train_images = train_images.astype(np.float32) / 255.0
+#train_images = train_images.astype(np.float32) / 255.0
 test_images = test_images.astype(np.float32) / 255.0
-train_labels -= 1
+#train_labels -= 1
 test_labels -= 1
 ## NOT reducing test_set by half for the run loops : 
 # test_images = test_images[:4000]
@@ -136,7 +136,7 @@ print(classic_infdf)
 
 name = sys.argv[2]
 result = pd.concat([infdf, classic_infdf], axis=1)
-result.to_csv('RPI_inferences_stl10'+str(num_iter)+name+'10.csv', index=False)
+result.to_csv('RPI_inferences_stl10_'+str(num_iter)+name+'10.csv', index=False)
 
 # litemodels_size = list(disk_usage(tflite_models_dir).values())
 # models_size = list(disk_usage(stl10_models_dir).values())
