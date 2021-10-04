@@ -56,13 +56,13 @@ def CNN():
 
     return model, CNN.__name__
 
-# NO RESHAPE version
+# RESHAPE version
 def FFNN():
     #global classes
     #w,l = images.shape[1], images.shape[2]
     model = tf.keras.Sequential([
     tf.keras.layers.InputLayer(input_shape=(28, 28)),
-    #tf.keras.layers.Reshape(target_shape=(28,28, 1)),
+    tf.keras.layers.Reshape(target_shape=(28,28, 1)),
     tf.keras.layers.Dense(40),
     #tf.keras.layers.Dense(40),
     tf.keras.layers.Flatten(),
