@@ -71,21 +71,32 @@ def evaluate_model(tflite_file):
     return round(end-start,2)
 
 ## Run classic TF part 
-fnn_model = tf.keras.models.load_model('./progressive_models/FFNN_classic.h5')
+#fnn_model = tf.keras.models.load_model('./progressive_models/FFNN_classic.h5')
 
-# From run model loop
-start = time.time()
-loss, acc = fnn_model.evaluate(test_images, test_labels, verbose=False)
-end = time.time()
-eval_time = round(end-start,2)
-
-# From mnist_rpi9
-
-# Timed inference
 size = 1000
 test_sample = test_images[:size]
-start_test = time.time()
-fnn_model.predict(test_sample)
-end_test = time.time()
-inf_time = round(end_test-start_test, 2)        # Total inference time
-inf_img = round((end_test-start_test)/size, 4 ) # Inference time for each image
+# From mnist_rpi9
+
+dic = {}
+# Timed inference
+for _,_,models in os.walk('./progressive_models/'):
+    for model in sorted(models):
+        # Load
+        fnn_model = tf.keras.models.load_model('./progressive_models/'+model)
+        # Prediction
+        start_test = time.time()
+        fnn_model.predict(test_sample)
+        end_test = time.time()
+        inf_time = round(end_test-start_test, 2)        # Total inference time
+        inf_img = round((end_test-start_test)/size, 4)  # Inference time for each image
+        # Result dictionnary
+        dic[model] = []
+        dic[model].append(inf_time)
+        dic[model].append(inf_img)
+
+# Results
+print(dic)
+idx = ['Total Inf', 'Inf / Img']
+dfdic = pd.DataFrame.from_dict(dic)
+dfdic.index=idx
+dfdic.to_csv('./saved_results/fnn_inferences/mnist_rpiv2runs.csv')
