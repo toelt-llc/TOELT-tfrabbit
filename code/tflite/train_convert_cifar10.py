@@ -23,7 +23,7 @@ def CNN():
     tf.keras.layers.Conv2D(filters=12, kernel_size=(3, 3), activation='relu'),
     tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
     tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(100)
+    tf.keras.layers.Dense(10)
     ])
 
     model._name = 'cnn'
@@ -46,7 +46,7 @@ def FFNN():
     tf.keras.layers.Dense(40),
     #tf.keras.layers.Dense(40),
     tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(100)
+    tf.keras.layers.Dense(10)
     ])
 
     model._name = 'ffnn'

@@ -138,7 +138,7 @@ print(classic_infdf)
 
 name = sys.argv[2]
 result = pd.concat([infdf, classic_infdf], axis=1)
-result.to_csv('RPI_inferences_stl10_'+str(num_iter)+name+'10.csv', index=False)
+result.to_csv('RPI_inferences_stl10_'+str(num_iter)+name+'.csv', index=False)
 
 # litemodels_size = list(disk_usage(tflite_models_dir).values())
 # models_size = list(disk_usage(stl10_models_dir).values())
