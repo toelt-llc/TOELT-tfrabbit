@@ -116,6 +116,7 @@ classic_infdf = pd.DataFrame.from_dict(classic_inferences) # tf results df
 print(classic_infdf)
 
 result = pd.concat([infdf, classic_infdf], axis=1)
+result.append(result.std(), ignore_index=True)
 
 # Memory usage
 litemodels_size = list(disk_usage(tflite_models_dir).values())
