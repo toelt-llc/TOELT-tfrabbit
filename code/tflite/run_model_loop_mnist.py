@@ -93,7 +93,7 @@ for model in tflite_models:
         inferences[model].append(evaluate_model(tflite_model))
         i +=1
 
-infdf = pd.DataFrame.from_dict(inferences)
+infdf = pd.DataFrame.from_dict(inferences) # tflite results df
 print(infdf)
 
 ## Run classic TF part 
@@ -112,15 +112,21 @@ for model in tf_models:
         classic_inferences[model._name].append(round(end-start,2))
         i +=1
 
-classic_infdf = pd.DataFrame.from_dict(classic_inferences)
+classic_infdf = pd.DataFrame.from_dict(classic_inferences) # tf results df
 print(classic_infdf)
 
-name = sys.argv[2]
 result = pd.concat([infdf, classic_infdf], axis=1)
-result.to_csv('RPI_inferences_loop_'+str(num_iter)+name+'.csv', index=False)
 
+# Memory usage
 litemodels_size = list(disk_usage(tflite_models_dir).values())
 models_size = list(disk_usage(mnist_models_dir).values())
 sizes_list = litemodels_size + models_size
-with open('disk_'+name+'.pkl', 'wb') as f:
-    pickle.dump(sizes_list, f)
+
+# The pickle file will contain a list including the combined dataframes + the disk size
+name = sys.argv[2]
+data = []
+data.append(result), data.append(sizes_list)
+with open('RPI_inferences_mnist_'+str(num_iter)+name+'.pkl', 'wb') as f:
+    pickle.dump(data, f)
+
+result.to_csv('RPI_inferences_mnist_'+str(num_iter)+name+'.csv', index=False)

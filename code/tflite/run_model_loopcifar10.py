@@ -120,12 +120,18 @@ for model in tf_models:
 classic_infdf = pd.DataFrame.from_dict(classic_inferences)
 print(classic_infdf)
 
-name = sys.argv[2]
 result = pd.concat([infdf, classic_infdf], axis=1)
-result.to_csv('RPI_inferences_cifar'+str(num_iter)+name+'10.csv', index=False)
 
-# litemodels_size = list(disk_usage(tflite_models_dir).values())
-# models_size = list(disk_usage(cifar_models_dir).values())
-# sizes_list = litemodels_size + models_size
-# with open('disk_'+name+'.pkl', 'wb') as f:
-#     pickle.dump(sizes_list, f)
+# Memory usage
+litemodels_size = list(disk_usage(tflite_models_dir).values())
+models_size = list(disk_usage(cifar_models_dir).values())
+sizes_list = litemodels_size + models_size
+
+# The pickle file will contain a list including the combined dataframes + the disk size
+name = sys.argv[2]
+data = []
+data.append(result), data.append(sizes_list)
+with open('RPI_inferences_cifar_10_'+str(num_iter)+name+'.pkl', 'wb') as f:
+    pickle.dump(data, f)
+
+result.to_csv('RPI_inferences_cifar_10_'+str(num_iter)+name+'.csv', index=False)
