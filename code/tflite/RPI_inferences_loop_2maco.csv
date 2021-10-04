@@ -1,3 +1,0 @@
-./mnist_tflite_models/CNN_mnist_model.tflite,./mnist_tflite_models/CNN_mnist_model_quant.tflite,./mnist_tflite_models/CNN_mnist_model_quant16.tflite,./mnist_tflite_models/CNN_mnist_model_quant8.tflite,./mnist_tflite_models/FFNN_mnist_model.tflite,./mnist_tflite_models/FFNN_mnist_model_quant.tflite,./mnist_tflite_models/FFNN_mnist_model_quant16.tflite,./mnist_tflite_models/FFNN_mnist_model_quant8.tflite,cnn,ffnn
-0.88,0.86,0.8,3.26,0.67,0.72,0.66,8.6,0.53,0.9
-0.86,0.82,0.81,3.14,0.65,0.76,0.66,9.36,0.38,0.79
