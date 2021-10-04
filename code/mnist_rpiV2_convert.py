@@ -18,6 +18,7 @@ mnist = tf.keras.datasets.mnist
 train_images = train_images.astype(np.float32) / 255.0
 test_images = test_images.astype(np.float32) / 255.0
 
+# Convert whole TF models dir to TFlite part
 
 def representative_data_gen():
     """ Necessary for the quant8 part
@@ -41,9 +42,19 @@ def convert_quant8(converter, model_name):
 
     return tflite_model_quant8
 
-
+dic = {} #Save the converting times
 for _,_,models in os.walk('./progressive_models/'):
     for model in sorted(models):
+        dic[model] = []
+        start = time.time()
+
         to_conv = tf.keras.models.load_model('./progressive_models/'+model)
         converter = tf.lite.TFLiteConverter.from_keras_model(to_conv)
         convert_quant8(converter, model)
+
+        end = time.time()
+        dic[model].append(round(end-start,2))
+
+dfres = pd.DataFrame.from_dict(dic)
+print(dfres)
+dfres.to_csv('./saved_results/fnn_inferences/converting_times.csv')

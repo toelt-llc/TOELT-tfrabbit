@@ -18,6 +18,7 @@ mnist = tf.keras.datasets.mnist
 train_images = train_images.astype(np.float32) / 255.0
 test_images = test_images.astype(np.float32) / 255.0
 
+# Train and save classical TF part
 # from train_convert + mnist_rpi
 def FFNN(neurons, layers, epoch=10, name='ffnn'):
     model = Sequential([Flatten(input_shape=(28,28))])
@@ -55,4 +56,4 @@ for n in neurons:
 dfres = pd.DataFrame.from_dict(dic)
 dfres.index = layers
 print(dfres)
-dfres.to_csv('./progressive_models/training_times.csv')
+dfres.to_csv('./saved_results/fnn_inferences/h5_training_times.csv')
