@@ -8,7 +8,7 @@ import sys
 import os
 
 from tensorflow.keras import Sequential
-from keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Flatten
 
 tflite_models_dir = pathlib.Path("./progressive_models_lite/")
 classic_models_dir = pathlib.Path('./progressive_models')
