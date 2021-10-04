@@ -9,6 +9,8 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 #TODO : main function
+import matplotlib
+matplotlib.use('Agg')
 
 
 tflite_models_dir = pathlib.Path("./stl10_tflite_models/")
