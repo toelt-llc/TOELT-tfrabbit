@@ -11,3 +11,7 @@ data/img/
 data/stl10_binary/*.txt
 data/stl10_binary/train*
 data/stl10_binary/unlabeled_X.bin
+
+code/progressive_models
+code/progressive_models_lite
+#code/progressive_models_lite_kept
