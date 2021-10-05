@@ -43,14 +43,14 @@ def FFNN(neurons, layers, epoch=10, name='ffnn'):
     model.save('./progressive_models/'+name+str(neurons)+'_'+str(layers)+'.h5')
 
     return model, process_time
-
-neurons = [5,10]#,50,128,256,512,1024,1500,2048,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000]
-layers = [2,3]#,4,6,8,10]
+#[5,10,50,128,256,512,1024,1500,2048,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,
+neurons = [7500,8000,8500,9000,9500,10000]
+layers = [2,3,4,6,8,10]
 dic = {} #Save the training times
 for n in neurons:
     dic[n] = []
     for l in layers:
-        _,tim = FFNN(n,l,2)
+        _,tim = FFNN(n,l,10)
         dic[n].append(tim)
 
 dfres = pd.DataFrame.from_dict(dic)
