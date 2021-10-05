@@ -67,8 +67,8 @@ def evaluate_model(tflite_file):
 # From model loop
 ## Run TFLite
 tflite_models = []
-#for dirname, _, filenames in os.walk('./progressive_models_lite/'):
-for dirname, _, filenames in os.walk('./progressive_models_lite_kept/'):
+for dirname, _, filenames in os.walk('./progressive_models_lite/'):
+#for dirname, _, filenames in os.walk('./progressive_models_lite_kept/'):
     for filename in sorted(filenames):
         tflite_models.append(os.path.join(dirname, filename))
 
@@ -82,7 +82,7 @@ for model in tflite_models:
     inferences[model[26:40]]=[]
     i = 0
     for i in range(num_iter):
-        inferences[model[26:40]].append([evaluate_model(tflite_model)])
+        inferences[model[26:40]].append(evaluate_model(tflite_model))
         #inferences[model[26:40]].append(round(evaluate_model(tflite_model)/test_images.shape[0],4))
         i +=1
 
@@ -90,7 +90,7 @@ print('To run with arg (device)')
 device = sys.argv[1]
 # Results
 print(inferences)
-idx = ['Total Inf', 'Inf / Img']
+idx = ['Total Inf , Inf / Img']
 infdf = pd.DataFrame.from_dict(inferences)
 infdf.index = idx
 infdf.to_csv('./saved_results/fnn_inferences/mnist_rpiv2lite'+device+'.csv')
