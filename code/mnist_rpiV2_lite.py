@@ -67,8 +67,8 @@ def evaluate_model(tflite_file):
 # From model loop
 ## Run TFLite
 tflite_models = []
-for dirname, _, filenames in os.walk('./progressive_models_lite/'):
-#for dirname, _, filenames in os.walk('./progressive_models_lite_kept/'):
+#for dirname, _, filenames in os.walk('./progressive_models_lite/'):
+for dirname, _, filenames in os.walk('./progressive_models_lite_kept/'):
     for filename in sorted(filenames):
         tflite_models.append(os.path.join(dirname, filename))
 
