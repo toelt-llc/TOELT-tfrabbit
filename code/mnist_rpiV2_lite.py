@@ -55,11 +55,12 @@ def evaluate_model(tflite_file):
     start = time.time()
     predictions = run_tflite_model(tflite_file, test_image_indices)
     end = time.time()
-    accuracy = (np.sum(test_labels== predictions) * 100) / len(test_images)
+    #accuracy = (np.sum(test_labels== predictions) * 100) / len(test_images)
 
     #print('Model accuracy is %.4f%% (Number of test samples=%d)' % (accuracy, len(test_images)))
     print('Inference time is : ', round(end-start,2))
-    return round(end-start,2)
+    print('Per image : ', round((end-start)/test_images.shape[0], 4))
+    return round(end-start,2), round((end-start)/test_images.shape[0], 4)
 
 # Run TFLite part
 
@@ -81,8 +82,8 @@ for model in tflite_models:
     inferences[model[26:40]]=[]
     i = 0
     for i in range(num_iter):
-        inferences[model[26:40]].append(round(evaluate_model(tflite_model),2))
-        inferences[model[26:40]].append(round(evaluate_model(tflite_model)/test_images.shape[0],4))
+        inferences[model[26:40]].append([evaluate_model(tflite_model)])
+        #inferences[model[26:40]].append(round(evaluate_model(tflite_model)/test_images.shape[0],4))
         i +=1
 
 print('To run with arg (device)')
