@@ -14,6 +14,10 @@ Usage is : mnist_rpi8.py -d {mnist|fashion} -n neurons -l layers  -e epochs -b b
 All the parameters are optional, with default : -d mnist -n 5,10 -l 2 -e 10 -b 128 -r 'unknown'
 - `run_pi.sh`: this is a shell script that calls the `mnist_rpi*.py` with different options for benchmarking. This script contains a loop to get averages and standard deviation of the different runs.
 - `run_frodo.sh`: this is a shell script that perform the same task as `run_pi.sh` but saves the results in different folder, and has differnt options. For example on frodo larger networks can be run.
+- `mnist_rpiV2*` : set of 4 files made to 1. create a list of FNN TF models, with varying neurons and layers,   
+2. run it and measure inference time on rpi, when possible   
+3. convert it to tflite format  
+4. run it as tflite and measure inference time, when possible ( the goal is to see if a converted model is runnable on the rpi, while it's classic version is not)
 
 
 ## 31.08 Push : 
