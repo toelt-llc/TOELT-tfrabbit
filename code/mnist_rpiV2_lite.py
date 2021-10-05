@@ -2,7 +2,7 @@
 import tensorflow as tf
 import pandas as pd
 import numpy as np
-import time 
+import time
 import pathlib
 import sys
 import os
@@ -19,7 +19,7 @@ test_images = test_images.astype(np.float32) / 255.0
 def run_tflite_model(tflite_file, test_image_indices):
     global test_images
 
-    # Initialize 
+    # Initialize
     interpreter = tf.lite.Interpreter(model_content=(tflite_file))
     interpreter.allocate_tensors()
 
@@ -64,9 +64,10 @@ def evaluate_model(tflite_file):
 # Run TFLite part
 
 # From model loop
-## Run TFLite 
+## Run TFLite
 tflite_models = []
-for dirname, _, filenames in os.walk('./progressive_models_lite/'):
+#for dirname, _, filenames in os.walk('./progressive_models_lite/'):
+for dirname, _, filenames in os.walk('./progressive_models_lite_kept/'):
     for filename in sorted(filenames):
         tflite_models.append(os.path.join(dirname, filename))
 
@@ -84,9 +85,11 @@ for model in tflite_models:
         inferences[model[26:40]].append(round(evaluate_model(tflite_model)/test_images.shape[0],4))
         i +=1
 
+print('To run with arg (device)')
+device = sys.argv[1]
 # Results
 print(inferences)
 idx = ['Total Inf', 'Inf / Img']
 infdf = pd.DataFrame.from_dict(inferences)
 infdf.index = idx
-infdf.to_csv('./saved_results/fnn_inferences/mnist_rpiv2lite.csv')
+infdf.to_csv('./saved_results/fnn_inferences/mnist_rpiv2lite'+device+'.csv')
