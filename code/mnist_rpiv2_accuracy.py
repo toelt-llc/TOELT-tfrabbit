@@ -25,7 +25,7 @@ for _,_,models in os.walk('./progressive_models_kept/'):
     for model in sorted(models):
         dic[model] = []
         start = time.time()
-        loaded_model = tf.keras.models.load_model(model)
+        loaded_model = tf.keras.models.load_model('./progressive_models_kept/' + model)
         loss,acc = loaded_model.evaluate(test_images, test_labels)
         # loss = round(eval[0],2)
         # acc = round(eval[1],2)
