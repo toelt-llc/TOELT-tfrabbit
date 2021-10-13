@@ -21,11 +21,11 @@ test_images = test_images.astype(np.float32) / 255.0
 # Run all kept h5 models, to have an idea on accuracy changes.
 
 dic = {} #Save the converting times
-for _,_,models in os.walk('./progressive_models/'):
+for _,_,models in os.walk('./progressive_models_kept/'):
     for model in sorted(models):
         dic[model] = []
         start = time.time()
-        loaded_model = tf.keras.models.load_model('./progressive_models/'+model)
+        loaded_model = tf.keras.models.load_model(model)
         loss,acc = loaded_model.evaluate(test_images, test_labels)
         # loss = round(eval[0],2)
         # acc = round(eval[1],2)
@@ -36,6 +36,6 @@ for _,_,models in os.walk('./progressive_models/'):
 
 dfres = pd.DataFrame.from_dict(dic)
 print(dfres)
-dfres.to_csv('./saved_results/fnn_inferences/accuracy_h5.csv')
-with open('./saved_results/fnn_inferences/accuracy_dict.pkl', 'wb') as f:
+dfres.to_csv('./saved_results/fnn_inferences/kept_accuracy_h5.csv')
+with open('./saved_results/fnn_inferences/kept_accuracy_dict.pkl', 'wb') as f:
     pickle.dump(dic, f)
